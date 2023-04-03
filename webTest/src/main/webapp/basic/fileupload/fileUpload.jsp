@@ -9,7 +9,15 @@
 <body>
 
 <h2>File Upload 연습</h2>
-<form action="">
+<!-- 
+	
+	파일 업로드용 <form>태그의 method는 반드시 'post'이어야 한다.
+	<form>태그에 enctype속성을 'multipart/form-data'라고 설정해야 한다.
+
+ -->
+<form action="<%=request.getContextPath()%>/fileUpload.do" method="post"
+		enctype="multipart/form-data">
+
 	작성자 이름 : <input type="text" name="username"><br><br>
 	한 개의 파일 선택 : <input type="file" name="upFile1"><br><br>
 	여러 개의 파일 선택 : <input type="file" name="upFile2"><br><br>
