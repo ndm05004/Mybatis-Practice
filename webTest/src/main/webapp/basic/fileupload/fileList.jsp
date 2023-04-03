@@ -36,6 +36,7 @@
 		for(FileinfoVO fvo : list){
 			%>
 			<tr>
+			
 				<td><%=fvo.getFile_no()%></td>
 				<td><%=fvo.getFile_writer()%></td>
 				<td><%=fvo.getSave_file_name()%></td>
