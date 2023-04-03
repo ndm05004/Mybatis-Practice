@@ -18,7 +18,7 @@
 
 <h3>전체 파일 목록</h3>
 <br><hr><br>
-<a href="">파일 업로드</a>
+<a href="<%=request.getContextPath()%>/fileUpload.do">파일 업로드</a>
 
 <table border ="1">
 <thead>
