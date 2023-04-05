@@ -32,7 +32,9 @@ public class fileInfoImpl implements IfileinfoDao{
 		} catch (Exception e) {
 			// TODO: handle exception
 		}finally {
+			session.commit();
 			if(session!=null) session.close();
+			
 		}
 		
 		return cnt;
