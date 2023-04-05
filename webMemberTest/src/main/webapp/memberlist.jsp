@@ -18,11 +18,15 @@
     });
 </script>
 
-<script type="text/javascript">
+<style>
 	
+	table{
+		border: 1px solid blue;
+	}
+	
+</style>
 
-	
-</script>
+
 
 <style>
 	#memAdd{
