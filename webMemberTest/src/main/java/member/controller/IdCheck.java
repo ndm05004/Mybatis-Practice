@@ -1,8 +1,6 @@
 package member.controller;
 
 import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,25 +9,26 @@ import javax.servlet.http.HttpServletResponse;
 
 import member.service.IMemberService;
 import member.service.MemberService;
-import member.vo.MemberVo;
 
-/**
- * Servlet implementation class memberList
- */
-@WebServlet("/memberList.do")
-public class memberList extends HttpServlet {
+
+@WebServlet("/idCheck.do")
+public class IdCheck extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+       
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		String userId = request.getParameter("id");
+		
 		IMemberService service = MemberService.getInstance();
 		
-		List<MemberVo> memList = service.selectAll();
+		String res = service.idcheck(userId);
 		
+		request.setAttribute("idvalue", res);
 		
-		request.setAttribute("memlist", memList);
-		request.getRequestDispatcher("/memberlist.jsp").forward(request, response);
+		request.getRequestDispatcher("/view/idcheck.jsp").forward(request, response);
+		
 		
 	}
 

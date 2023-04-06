@@ -59,11 +59,15 @@ List<MemberVo> memList = (List<MemberVo>)request.getAttribute("memlist");
 <%
 	for(MemberVo mvo : memList){
 %>
-	<tr><td><%= mvo.getMem_id() %></td>
-	<td><%= mvo.getMem_pass() %></td>
-	<td><%= mvo.getMem_name() %></td>
-	<td><%= mvo.getMem_tel() %></td>
-	<td><%= mvo.getMem_addr() %></td></tr>
+	<tr>
+		<td>
+		<a href="<%=request.getContextPath()%>/selectMember.do?id=<%=mvo.getMem_id()%>"><%=mvo.getMem_id()%></a>
+		</td>
+		<td><%= mvo.getMem_pass() %></td>
+		<td><%= mvo.getMem_name() %></td>
+		<td><%= mvo.getMem_tel() %></td>
+	<td><%= mvo.getMem_addr() %></td>
+	</tr>
 <%
 	}
 %>

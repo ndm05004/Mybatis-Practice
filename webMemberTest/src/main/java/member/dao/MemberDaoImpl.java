@@ -102,6 +102,28 @@ public class MemberDaoImpl implements IMemberDao {
 		
 		return cnt;
 	}
+
+	@Override
+	public String idcheck(String id) {
+		
+		SqlSession session = null;
+		String mem_id=null;
+		try {
+			
+			session = MybatisSqlSessionFactory.getSqlSession();
+			
+
+			mem_id = session.selectOne("member.idcheck", id);
+			
+		} finally {
+			session.commit();
+			session.close();
+		}
+		
+		return mem_id;
+	}
+	
+	
 	
 
 }

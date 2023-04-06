@@ -43,6 +43,12 @@ public class MemberService implements IMemberService{
 		// TODO Auto-generated method stub
 		return dao.deleteMember(id);
 	}
+
+	@Override
+	public String idcheck(String id) {
+		// TODO Auto-generated method stub
+		return dao.idcheck(id);
+	}
 	
 	
 

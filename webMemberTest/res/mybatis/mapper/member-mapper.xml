@@ -26,6 +26,9 @@
 		delete from mymember where MEM_ID = #{mem_id}
 	</delete>
 	
+	<select id="idcheck" parameterType="String" resultType="String">
+		select mem_id from mymember where mem_id =#{mem_id}
+	</select>
 
 </mapper>
 

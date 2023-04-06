@@ -1,8 +1,6 @@
 package member.controller;
 
 import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,26 +12,33 @@ import member.service.MemberService;
 import member.vo.MemberVo;
 
 /**
- * Servlet implementation class memberList
+ * Servlet implementation class selectmember
  */
-@WebServlet("/memberList.do")
-public class memberList extends HttpServlet {
+@WebServlet("/selectMember.do")
+public class selectmember extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		request.setCharacterEncoding("utf-8");
+		
+		String id = (String)request.getParameter("id");
+				
 		IMemberService service = MemberService.getInstance();
 		
-		List<MemberVo> memList = service.selectAll();
+		MemberVo vo = service.selectDetail(id);
 		
+		System.out.println(vo);
 		
-		request.setAttribute("memlist", memList);
-		request.getRequestDispatcher("/memberlist.jsp").forward(request, response);
+		request.setAttribute("res", vo);
+		request.getRequestDispatcher("/MemberDetail.jsp").forward(request, response);
+		
 		
 	}
 
-
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
