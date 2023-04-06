@@ -1,8 +1,6 @@
 package member.controller;
 
 import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,25 +9,31 @@ import javax.servlet.http.HttpServletResponse;
 
 import member.service.IMemberService;
 import member.service.MemberService;
-import member.vo.MemberVo;
 
 /**
- * Servlet implementation class memberList
+ * Servlet implementation class DeleteMember
  */
-@WebServlet("/memberList.do")
-public class memberList extends HttpServlet {
+@WebServlet("/deletemember.do")
+public class DeleteMember extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+       
+  
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		request.setCharacterEncoding("utf-8");
+		
+		String id = (String)request.getParameter("id");
+				
 		IMemberService service = MemberService.getInstance();
 		
-		List<MemberVo> memList = service.selectAll();
+		int cnt = service.deleteMember(id);
+		
+		if(cnt>0) {
+			response.sendRedirect(request.getContextPath() + "/memberList.do");
+		}
 		
 		
-		request.setAttribute("memlist", memList);
-		request.getRequestDispatcher("/memberlist.jsp").forward(request, response);
 		
 	}
 

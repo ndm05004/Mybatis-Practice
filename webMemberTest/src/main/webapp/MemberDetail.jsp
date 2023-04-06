@@ -14,7 +14,6 @@
         $('#back').click(function() {
         	 window.location.href = '<%= request.getContextPath() %>/memberList.do';
         });
- 
     });
 </script>
 
@@ -49,7 +48,12 @@ MemberVo vo = (MemberVo)request.getAttribute("res");
 		<td><%=vo.getMem_addr()%></td>
 	</tr>
 	<tr>
-		<td colspan="2"> <input type ="button" value="수정" id="storage"> <input type="button" id="delete" value="삭제" /><input type ="button" value="회원목록" id="back"> </td>
+		<td colspan="2"> 
+		<button value="수정" id="update" onclick="location.href='<%=request.getContextPath()%>/memupdate.jsp?id=<%=vo.getMem_id()%>'">수정</button>
+		
+		<button value="삭제" onclick="window.location.href='<%=request.getContextPath()%>/deletemember.do?id=<%=vo.getMem_id()%>'">삭제 </button> 
+		
+		<input type ="button" value="회원목록" id="back" > </td>
 	</tr>
 
 

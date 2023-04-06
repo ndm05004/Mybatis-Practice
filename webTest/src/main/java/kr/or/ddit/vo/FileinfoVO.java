@@ -8,6 +8,7 @@ public class FileinfoVO {
 	private String save_file_name;
 	private long file_size;
 	private String file_date;
+	
 	public long getFile_no() {
 		return file_no;
 	}

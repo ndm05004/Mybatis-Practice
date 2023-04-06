@@ -49,6 +49,12 @@ public class MemberService implements IMemberService{
 		// TODO Auto-generated method stub
 		return dao.idcheck(id);
 	}
+
+	@Override
+	public int updateMember(MemberVo vo) {
+		// TODO Auto-generated method stub
+		return dao.updateMember(vo);
+	}
 	
 	
 

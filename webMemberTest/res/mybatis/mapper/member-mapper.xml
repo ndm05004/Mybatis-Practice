@@ -29,7 +29,21 @@
 	<select id="idcheck" parameterType="String" resultType="String">
 		select mem_id from mymember where mem_id =#{mem_id}
 	</select>
-
+	
+	
+	<update id="updatemember" parameterType="memVo">
+	  update member
+	  <set>
+	    <if test="mem_pass != null">mem_pass = #{mem_pass},</if>
+	    <if test="mem_name != null">mem_name = #{mem_name},</if>
+	    <if test="mem_tel != null">mem_tel = #{mem_tel},</if>
+	    <if test="mem_addr != null">mem_addr = #{mem_addr},</if>
+	    <if test="mem_photo != null">mem_photo = #{mem_photo},</if>
+	  </set>
+	  where mem_id = #{mem_id}
+	</update>
+	
+	
 </mapper>
 
 

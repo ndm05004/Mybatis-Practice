@@ -15,4 +15,6 @@ public interface IMemberDao {
 	public int deleteMember(String id);
 	
 	public String idcheck(String id);
+	
+	public int updateMember(MemberVo vo);
 }
