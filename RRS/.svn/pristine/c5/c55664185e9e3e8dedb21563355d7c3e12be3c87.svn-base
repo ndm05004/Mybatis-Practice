@@ -1,0 +1,43 @@
+package rrs.admin.controller;
+
+import java.util.List;
+
+import rrs.admin.service.AdminServiceImpl;
+import rrs.admin.service.IAdminService;
+import rrs.vo.RestautantVO;
+
+
+
+public class ex {
+	
+	public static void main(String[] args) {
+
+		IAdminService service = AdminServiceImpl.getInstance();
+		
+		// 승인대기 조회
+		
+		List<RestautantVO> list = service.restaurantInfo();
+		
+		System.out.println(list.size());
+		
+		for(RestautantVO vo : list) {
+			System.out.println(vo);
+		}
+		
+		
+		//int result = service.signupApproval("d001");
+		//System.out.println(result);
+		
+		//System.out.println("dd");
+		
+		//int result = service.signupDelete("d001");
+		//System.out.println(result);
+		
+		
+		
+		
+		
+	}
+
+
+}

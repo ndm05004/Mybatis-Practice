@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="review">
+    
+    <!-- 리뷰 입력 -->
+	<insert id="" parameterType="reviewVo">
+		insert into REVIEW(RV_ID, RV_CONTENT, RV_DATE, RV_TITLE, RV_SC, RV_RCMD, RV_PHOTO, MEM_ID, RS_ID)
+		values(SEQ_RV.nextval, #{rv_content}, sysdate, #{rv_title}, #{rv_sc}, #{rv_rcmd}, #{rv_photo}, #{mem_id}, #{rs_id})
+	</insert>
+	
+	<!-- 리뷰 보기 + 더보기 기능(동적쿼리)-->
+	<select id="" parameterType="String" resultType="">
+		select * from REVIEW where MEM_ID = #{mem_id}
+	</select>
+	
+	<!-- 리뷰 수정 -->
+	<update id="" parameterType="reviewVo">
+		update REVIEW set RV_TITLE=#{rv_title}, RV_CONTENT=#{rv_content}, RV_SC= #{rv_sc},
+		                  RV_PHOTO=#{rv_photo}, RV_DATE=sysdate where mem_id = #{mem_id}
+	</update>
+	
+	<!-- 리뷰 삭제 -->
+	<delete id="" parameterType="reviewVo">
+		delete from REVIEW where mem_id = #{mem_id} and RV_ID = #{rv_id}
+	</delete>
+	
+	<!-- 댓글 입력 -->
+	<insert id="" parameterType="cmtVo">
+		insert into CMT(CMT_ID, CMT_CONTENT, CMT_DATE, MEM_ID, RV_ID)
+        values(SEQ_CMT.nextval, #{cmt_content}, sysdate, #{mem_id}, #{rv_id});
+	</insert>
+	
+	<!-- 댓글 수정 -->
+	<update id="">
+		update CMT set CMT_CONTENT=#{cmt_content}, CMT_DATE=sysdate where mem_id = #{mem_id}
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="">
+		delete from CMT where mem_id = #{mem_id} and CMT_ID = #{cmt_id}
+	</delete>
+	
+</mapper>
