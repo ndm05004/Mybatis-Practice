@@ -10,7 +10,7 @@
     <!--        사업자 승인 페이지 부분       -->
     <!-- 사업자 정보조회(승인대기) -->
     <select id="waitApproval" resultType="restaurantVo">
-       select rst_id, rst_name, rst_req from restaurant where accept is null
+       select rst_id, rst_name, rst_req, bs_num from restaurant where accept is null
     </select>
    
    

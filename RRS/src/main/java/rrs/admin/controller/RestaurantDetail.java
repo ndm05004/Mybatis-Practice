@@ -1,8 +1,6 @@
 package rrs.admin.controller;
 
 import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,30 +12,35 @@ import rrs.admin.service.IAdminService;
 import rrs.vo.RstDetailVO;
 
 /**
- * Servlet implementation class RestaurantInfo
+ * Servlet implementation class RestaurantDetail
  */
-@WebServlet("/admin/restaurantInfo.do")
-public class RestaurantInfo extends HttpServlet {
+@WebServlet("/admin/restaurantDetail.do")
+public class RestaurantDetail extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		
+		String rst_id = request.getParameter("rst_id");
+		
 		IAdminService service = AdminServiceImpl.getInstance();
 		
-		List<RstDetailVO> rstDetailList = service.restaurantInfo();
-		request.setAttribute("rstDetailList", rstDetailList);
-		request.getRequestDispatcher("/admin/view/rstDetailview.jsp").forward(request, response);
+		RstDetailVO vo= service.restaurantDetail(rst_id);
 		
-	}
-
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		/*
+		 * Gson gson = new Gson();
+		 * 
+		 * String jsonData = gson.toJson(vo);
+		 * 
+		 * response.getWriter().write(jsonData); response.flushBuffer();
+		 */
+		 
+		
+		request.setAttribute("rstDetailVo", vo);
+		request.getRequestDispatcher("/admin/view/restaurantDetailview.jsp").forward(request, response);
+		
 	}
 
 }

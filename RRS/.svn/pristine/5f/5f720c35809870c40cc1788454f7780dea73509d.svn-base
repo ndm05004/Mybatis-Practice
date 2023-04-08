@@ -11,10 +11,10 @@ import rrs.admin.service.AdminServiceImpl;
 import rrs.admin.service.IAdminService;
 
 /**
- * Servlet implementation class ApproveRestaurant
+ * Servlet implementation class DeleteRestaurant
  */
-@WebServlet("/admin/approveRestaurant.do")
-public class ApproveRestaurant extends HttpServlet {
+@WebServlet("/admin/deleteRestaurant.do")
+public class DeleteRestaurant extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 
@@ -24,19 +24,13 @@ public class ApproveRestaurant extends HttpServlet {
 		
 		IAdminService service = AdminServiceImpl.getInstance();
 		
-		int cnt =service.signupApproval(rst_id);
+		int cnt =service.signupDelete(rst_id);
 		
 		request.setAttribute("res", cnt);
 		
 		request.getRequestDispatcher("/admin/view/result.jsp").forward(request, response);
 		
 		
-	}
-
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
 	}
 
 }
