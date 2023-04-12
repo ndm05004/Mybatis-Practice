@@ -1,0 +1,145 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<!DOCTYPE html>
+<html>
+ <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>TableMate입니다</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        
+        
+        <script type="text/javascript" src="../js/jquery-3.6.4.min.js"></script>
+
+<script type="text/javascript">
+mypath = '<%=request.getContextPath()%>';
+
+$(document).ready(function() {
+	
+	$.ajax({
+		type : 'get',
+		url : "<%=request.getContextPath()%>/admin/signCount.do",
+		success : function(res) {
+			$('#countBox').text(res);
+		}		
+	});
+})
+
+
+
+</script>
+
+
+
+<style type="text/css">
+.mt-4 {
+	margin-left: 20px;
+}
+
+hr {
+	width:97%;
+	margin-left: 20PX;
+}
+.signWrap {
+	width: 100%;
+	height: 300px;
+	display: flex;
+	justify-content: center;
+}
+
+ul {
+	list-style: none;
+	display: flex;
+}
+
+.signWrap {
+	font-size: 1.5em;
+	text-align: center;
+}
+
+.signWrap .signBox {
+	width: 300PX;
+	height: 150px;
+	background: white;
+	border: 1px solid #EAEAEA;
+	margin-left: 30px;
+}
+
+.signWrap .signTitle {
+	width: 100%;
+	height: 50px;
+	background: #F6F6F6; border : 2px solid #EAEAEA;
+	font-size: 1.2em;
+	text-align: center;
+	line-height: 50px;
+	border: 2px solid #EAEAEA
+}
+
+.signWrap .signContent {
+	line-height: 100px;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.secondWrap {
+	width: 100%;
+	height: 700px;
+}
+
+.secondWrap .listBox {
+	width: 45%;
+	height: 650px;
+	background: white;
+	border: 1px solid black;
+	margin-left: 30px;
+}
+</style>
+</head>
+<body>
+
+  <!-- Page content-->
+	<div class="firstWrap">
+		<h3 class="mt-4">결재대기</h1>
+		<hr>
+		<div class="signWrap">
+			<ul>
+				<li class="signBox">
+					<div class="signTitle">사업자 승인 대기</div>
+					<div class="signContent" name="count" id="countBox">COUNT</div>
+				</li>
+				<li class="signBox">
+					<div class="signTitle">대기</div>
+					<div class="signContent" name="count" id="countBox">COUNT</div>
+				</li>
+				<li class="signBox">
+					<div class="signTitle">대기</div>
+					<div class="signContent" name="count" id="countBox">COUNT</div>
+				</li>
+				<li class="signBox">
+					<div class="signTitle">대기</div>
+					<div class="signContent" name="count" id="countBox">COUNT</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<h3 class="mt-4">리스트</h1>
+	<hr>
+	<div class="secondWrap">
+
+		<ul>
+			<li class="listBox"></li>
+			<li class="listBox"></li>
+		</ul>
+
+
+	</div>
+
+</body>
+</html>

@@ -1,5 +1,0 @@
-package rrs.admin.dao;
-
-public interface IAdminDao {
-
-}

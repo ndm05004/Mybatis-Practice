@@ -1,0 +1,53 @@
+package rrs.rstaurant.service;
+
+import java.util.List;
+
+import rrs.rstaurant.dao.IRstDao;
+import rrs.rstaurant.dao.RstDaoImpl;
+import rrs.vo.CategoryVO;
+import rrs.vo.RestautantVO;
+
+public class RstServiceImpl implements IRstService{
+	private static RstServiceImpl instance;
+	private IRstDao dao;
+	private RstServiceImpl() {
+		dao = RstDaoImpl.getInstance();
+	}
+	
+	public static RstServiceImpl getInstance() {
+		if(instance ==null)instance = new RstServiceImpl();
+		return instance;
+	}
+	
+	@Override
+	public List<CategoryVO> getCategory() {
+		return dao.getCategory();
+	}
+	
+	@Override
+	public int checkId(String rstId) {
+		return dao.checkId(rstId);
+	}
+	
+	@Override
+	public int rstJoin(RestautantVO vo) {
+		return dao.rstJoin(vo);
+	}
+	
+	
+	@Override
+	public RestautantVO selectRst(String rst_id) {
+		return dao.selectRst(rst_id);
+	}
+
+	@Override
+	public int updateRst(RestautantVO vo) {
+		System.out.println("서비스");
+		return dao.updateRst(vo);
+	}
+
+	@Override
+	public RestautantVO rstLogin(RestautantVO vo) {
+		return dao.rstLogin(vo);
+	}
+}

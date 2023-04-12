@@ -7,6 +7,115 @@
 <!-- <mapper>태그의 namespace속성은 Java소스에서 실행할 SQL문을 호출할 때 같이 사용되는 이름이다. -->
 <mapper namespace="restaurant">
 	
+	<!-- 예약 상세 정보 보기 -->
+	<select id="getReservDetail" parameterType="String" resultType="reservDetailVo">
+		select 
+		    A.rs_id,
+		    B.mem_name,
+		    A.rs_datetime,
+		    A.rs_people,
+		    B.mem_tel,
+		    D.menu_name,
+		    C.rm_qty
+		from RESERVATION A, 
+		        MEMBERS B,
+		        RSMENU C,
+		        MENU D
+		where A.mem_id = B.mem_id
+		and A.rs_id = C.rs_id
+		and D.menu_id = C.menu_id
+		and A.rs_id = #{data}
+	</select>
+	
+	<!-- 내 가게 예약 정보 -->
+	<select id="getReservation" parameterType="String" resultType="reservationVo">
+		select * from RESERVATION
+		where RST_ID = #{data}
+	</select>
+	
+	  <!-- 사업자 정보조회  -->
+   <select id="selectRst" parameterType="String" resultType="restaurantVo">
+     select a.rst_id,
+        A.rst_pass,
+        A.RST_NAME,
+        A.RST_INFO,
+        A.BS_NUM,
+        A.CLOSEDDAY,
+        A.OPNETME,
+        A.CLOSETIME,
+        A.RST_ADDR,
+        A.RST_MAIL,
+        A.RST_TEL, 
+        A.RST_PHOTO,
+        B.CTG_NAME AS CTG_ID 
+        from RESTAURANT A, CATEGORY B 
+        where b.ctg_id = A.CTG_ID 
+        and rst_id = #{rst_id}
+      
+   </select>
+   
+   <!-- 사업자 정보업데이트  -->
+   <select id="updateRst" parameterType="restaurantVo" >
+      update  RESTAURANT set 
+      RST_ADDR = #{rst_addr},
+	RST_TEL = #{rst_tel},
+	RST_INFO = #{rst_info},
+	RST_PASS = #{rst_pass},
+	RST_MAIL = #{rst_mail},
+	CLOSEDDAY = #{closedday},
+	OPNETME = #{opnetme},
+	CLOSETIME = #{closetime},
+	RST_PHOTO = #{rst_photo}
+	where  	rst_id = #{rst_id}
+      
+   </select>
+	
+	
+	<!-- 회원가입 -->
+	<insert id="rstJoin" parameterType="restaurantVo">
+		insert into 
+		restaurant(
+				RST_ID,	
+				RST_NAME,
+				RST_PASS,
+				BS_NUM,	
+				RST_TEL,
+				RST_MAIL,
+				RST_ADDR,
+				CTG_ID,
+				RST_REQ,
+				RST_PHOTO
+		)values(
+			 #{rst_id},
+			 #{rst_name},
+			 #{rst_pass},
+			 #{bs_num},
+			 #{rst_tel},
+			 #{rst_mail},
+			 #{rst_addr},
+			 #{ctg_id},
+			 sysdate,
+			 #{rst_photo}
+		 )
+	</insert>
+	
+	<!-- 아이디 유효성 체크 -->
+	<select id="checkId" parameterType="String" resultType="int">
+		select count(*) 
+		from RESTAURANT
+		where rst_id = #{data}
+	</select>
+	
+	<!-- 카테고리 끌고오기 -->
+	<select id="getCategory" resultType="categoryVo">
+		select *
+		from category
+	</select>
+	
+	<!-- 
+		======================================================== 위에 구현완료 된거
+	 -->
+	
 	<!-- 승인 여부 확인  1이면 승인 안된거임 0이면 로그인완료-->
 	<select id="rstAccept" resultType="int" parameterType="restaurantVo">
 		select 
@@ -47,31 +156,7 @@
 		set RST_PASS = #{data}
 	</update>
 	
-	<!-- 회원가입 -->
-	<insert id="rstJoin" parameterType="restaurantVo">
-		insert into 
-		restaurant(
-				RST_ID,	
-				RST_NAME,
-				RST_PASS,
-				BS_NUM,	
-				RST_TEL,
-				RST_MAIL,
-				RST_ADDR,
-				CTG_ID,
-				RST_REQ
-		)values(
-			 #{RST_ID},
-			 #{RST_NAME},
-			 #{RST_PASS},
-			 #{BS_NUM},
-			 #{RST_TEL},
-			 #{RST_MAIL},
-			 #{RST_ADDR},
-			 #{CTG_ID},
-			 sysdate
-		 )
-	</insert>
+	
 		
     <!-- 메뉴 전체 조회 -->
     <select id="rstAllMenu" parameterType="String" resultType="menuVo">
@@ -89,7 +174,7 @@
     
     <!-- 메뉴 수정 -->
     <update id="updateMenu" parameterType="Map">
-    	update MENU 
+    	update MENU
     	<set>
     		<if test="menu_name != null">MENU_NAME = #{menu_name},</if>
     		<if test="menu_price != null">MENU_PRICE = #{menu_price},</if>

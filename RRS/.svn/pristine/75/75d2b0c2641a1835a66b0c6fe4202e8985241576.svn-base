@@ -1,5 +1,0 @@
-package rrs.member.dao;
-
-public interface IMemberDao {
-
-}

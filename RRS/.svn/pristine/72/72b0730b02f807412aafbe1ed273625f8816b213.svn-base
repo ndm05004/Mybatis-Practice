@@ -1,0 +1,57 @@
+xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+   PUBLIC "-//mybatis.org/DTD Config 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-config.dtd">
+   
+<configuration>
+   <properties resource="kr/or/ddit/mybatis/config/dbinfo.properties" />
+   
+   <settings>
+      <setting name="jdbcTypeForNull" value="NULL"/>
+   </settings>
+   
+   <typeAliases>
+      <typeAlias type="rrs.vo.BookmarkVO" alias="bookmarkVo"/>
+      <typeAlias type="rrs.vo.CategoryVO" alias="categoryVo"/>
+      <typeAlias type="rrs.vo.CmtReportVO" alias="cmtreportVo"/>
+      <typeAlias type="rrs.vo.CmtVO" alias="cmtVo"/>
+      <typeAlias type="rrs.vo.IqrVO" alias="iqrVo"/>
+      <typeAlias type="rrs.vo.MemberVO" alias="memberVo"/>
+      <typeAlias type="rrs.vo.MenuVO" alias="menuVo"/>
+      <typeAlias type="rrs.vo.NoticeBoardVO" alias="noticeboardVo"/>
+      <typeAlias type="rrs.vo.ReservationVO" alias="reservationVo"/>
+      <typeAlias type="rrs.vo.RestautantVO" alias="restaurantVo"/>
+      <typeAlias type="rrs.vo.ReviewVO" alias="reviewVo"/>
+      <typeAlias type="rrs.vo.RsMenuVO" alias="rsmenuVo"/>
+      <typeAlias type="rrs.vo.RstcmtVO" alias="rstcmtVo"/>
+      <typeAlias type="rrs.vo.RsttagVO" alias="rsttagVo"/>
+      <typeAlias type="rrs.vo.RvrepotVO" alias="rvreportVo"/>
+      <typeAlias type="rrs.vo.TableTypeVO" alias="tabletypeVo"/>
+      <typeAlias type="rrs.vo.TagVO" alias="tagVo"/>
+      <typeAlias type="rrs.vo.RstDetailVO" alias="rstdetailVo"/>
+      <typeAlias type="rrs.vo.ReservationDetailVO" alias="reservDetailVo"/>
+      <typeAlias type="rrs.vo.RvReportViewVO" alias="rvrVo"/>
+   </typeAliases>
+   
+   <environments default="oracleEnv">
+      <environment id="oracleEnv">
+         <transactionManager type="JDBC"/>
+         <dataSource type="POOLED">
+            <property name="driver" value="${driver}"/>
+            <property name="url" value="${url}"/>
+            <property name="username" value="${user}"/>
+            <property name="password" value="${pass}"/>
+         </dataSource>
+         
+      </environment>
+      
+   </environments>
+   <mappers>
+      <mapper resource="kr/or/ddit/mybatis/mapper/rst-mapper.xml"/>
+      <mapper resource="kr/or/ddit/mybatis/mapper/admin-mapper.xml"/>
+      <mapper resource="kr/or/ddit/mybatis/mapper/member-mapper.xml"/>
+   </mappers>
+   
+
+</configuration>
+
