@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 mybatis에서 처리할 SQL문을 처리하는 문서입니다... -->
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!-- <mapper>태그의 namespace속성은 Java소스에서 실행할 SQL문을 호출할 때 같이 사용되는 이름이다. -->
+<mapper namespace="restaurant">
+	
+	
+	 <!-- 메뉴 등록 이거 해야됨-->
+    <insert id="addMenu" parameterType="menuVo">
+    	insert into menu values(
+    		(select COALESCE(MAX(menu_id), 0)+1 from menu where rst_id = #{rst_id}),
+            #{rst_id},
+            #{menu_name},
+            #{menu_price},
+            #{menu_ds},
+            #{menu_photo})
+    </insert> 
+
+	<!-- 메뉴 전체 조회 -->
+    <select id="showMenu" parameterType="String" resultType="menuVo">
+    	select * 
+    	from MENU
+    	where RST_ID = #{data}
+    </select>
+
+
+	<!--예약 삭제-->  
+	<delete id="rsCancel" parameterType="String">
+		delete 
+		from reservation 
+		where rs_id = #{rs_id}
+	</delete>
+	
+
+	<!-- 예약 상세 정보 보기 -->
+	<select id="getReservDetail" parameterType="String" resultType="reservDetailVo">
+		select 
+		    A.rs_id,
+		    B.mem_name,
+		    A.rs_datetime,
+		    A.rs_people,
+		    B.mem_tel,
+		    D.menu_name,
+		    C.rm_qty
+		from RESERVATION A, 
+		        MEMBERS B,
+		        RSMENU C,
+		        MENU D
+		where A.mem_id = B.mem_id
+		and A.rs_id = C.rs_id
+		and D.menu_id = C.menu_id
+		and A.rs_id = #{data}
+	</select>
+	
+	<!-- 내 가게 예약 정보-->
+	<select id="getReservation" parameterType="String" resultType="reservationVo">
+		select * from RESERVATION
+		where RST_ID = #{data}
+	</select>
+	
+	  <!-- 사업자 정보조회 -->
+   <select id="selectRst" parameterType="String" resultType="restaurantVo">
+     select a.rst_id,
+        A.rst_pass,
+        A.RST_NAME,
+        A.RST_INFO,
+        A.BS_NUM,
+        A.CLOSEDDAY,
+        A.OPNETME,
+        A.CLOSETIME,
+        A.RST_ADDR,
+        A.RST_MAIL,
+        A.RST_TEL, 
+        A.RST_PHOTO,
+        B.CTG_NAME AS CTG_ID 
+        from RESTAURANT A, CATEGORY B 
+        where b.ctg_id = A.CTG_ID 
+        and rst_id = #{rst_id}
+      
+   </select>
+   <!-- 사업자별 리뷰리스트 가져오기 -->
+   <select id="reviewAll" parameterType="String" resultType="reviewVo">
+   		select 
+   		a.rv_date,
+        a.rv_title,
+        a.rv_content,
+        b.mem_nick as mem_id,
+        a.rs_id
+        from review A, members b,reservation c
+        where c.rst_id = #{rst_id}
+        and c.rs_id = a.rs_id
+        and a.mem_id = b.mem_id
+        order by 1 desc
+   </select>
+   
+   <!-- 사업자 태그 조회하기-->
+   <select id="selectTag" parameterType="String" resultType="tagVo">
+   	   select b.TAG_NAME from rsttag A, tag b where a.RST_ID = #{data} and b.tag_id = A.TAG_ID
+   </select>
+   
+   <!-- 사업자 정보업데이트-->
+   <select id="updateRst" parameterType="restaurantVo" >
+      update  RESTAURANT set 
+      RST_ADDR = #{rst_addr},
+	RST_TEL = #{rst_tel},
+	RST_INFO = #{rst_info},
+	RST_PASS = #{rst_pass},
+	RST_MAIL = #{rst_mail},
+	CLOSEDDAY = #{closedday},
+	OPNETME = #{opnetme},
+	CLOSETIME = #{closetime},
+	RST_PHOTO = #{rst_photo}
+	where  	rst_id = #{rst_id}
+      
+   </select>
+	
+	
+	<!-- 회원가입-->
+	<insert id="rstJoin" parameterType="restaurantVo">
+		insert into 
+		restaurant(
+				RST_ID,	
+				RST_NAME,
+				RST_PASS,
+				BS_NUM,	
+				RST_TEL,
+				RST_MAIL,
+				RST_ADDR,
+				CTG_ID,
+				RST_REQ,
+				RST_PHOTO
+		)values(
+			 #{rst_id},
+			 #{rst_name},
+			 #{rst_pass},
+			 #{bs_num},
+			 #{rst_tel},
+			 #{rst_mail},
+			 #{rst_addr},
+			 #{ctg_id},
+			 sysdate,
+			 #{rst_photo}
+		 )
+	</insert>
+	
+	<!-- 아이디 유효성 체크 -->
+	<select id="checkId" parameterType="String" resultType="int">
+		select count(*) 
+		from RESTAURANT
+		where rst_id = #{data}
+	</select>
+	
+	<!-- 카테고리 끌고오기 -->
+	<select id="getCategory" resultType="categoryVo">
+		select *
+		from category
+	</select>
+	
+	<!-- 
+		======================================================== 위에 구현완료 된거
+	 -->
+	
+	<!-- 승인 여부 확인  1이면 승인 안된거임 0이면 로그인완료-->
+	<select id="rstAccept" resultType="int" parameterType="restaurantVo">
+		select 
+		count(*)
+		from RESTAURANT
+		where RST_ID = #{rst_id}
+		and RST_PASS = #{rst_pass}
+		and ACCEPT is null
+	</select>
+	
+	
+	<!-- 로그인 쿼리 -->
+	<select id="rstLogin" resultType="restaurantVo" parameterType="restaurantVo">
+		select *
+		from RESTAURANT
+		where RST_ID = #{rst_id}
+		and RST_PASS = #{rst_pass}
+	</select>
+	
+	<!-- 아이디 찾기 -->
+	<select id="rstSearchId" parameterType="String" resultType="String">
+		select RST_ID
+		from RESTAURANT
+		where RST_MAIL = #{data};
+	</select>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="rstSearchPass" resultType="String" parameterType="restaurantVo">
+		select RST_Pass
+		from RESTAURANT
+		where RST_MAIL = #{rst_mail}
+		and RST_ID = #{rst_id}
+	</select>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="changePass" parameterType="String">
+		update RESTAURANT
+		set RST_PASS = #{data}
+	</update>
+	
+	
+		
+    
+    
+    <!-- 메뉴 삭제 -->
+    <delete id="delMenu" parameterType="menuVo">
+    	delete from MENU
+    	where MENU_ID = #{menu_id}
+    	and RST_ID = #{rst_id}
+    </delete>
+    
+    <!-- 메뉴 수정 -->
+    <update id="updateMenu" parameterType="Map">
+    	update MENU
+    	<set>
+    		<if test="menu_name != null">MENU_NAME = #{menu_name},</if>
+    		<if test="menu_price != null">MENU_PRICE = #{menu_price},</if>
+    		<if test="menu_ds != null">MENU_DS = #{menu_ds},</if>
+    		<if test="menu_photo != null">MENU_PHOTO = #{menu_photo}</if>
+    	</set>
+    	where MENU_ID = #{menu_id}
+    	and RST_ID = #{rst_id}
+    </update>
+    
+    <!-- 메뉴 등록전 해야할일 -->
+    
+   
+    
+    <!-- 리뷰 조회 -->
+    <select id="searchReview" parameterType="String" resultType="reviewVo">
+    	select * 
+    	from REVIEW
+    	where RST_ID = #{data}
+    </select>
+    
+    <!-- 리뷰 신고 -->
+    <insert id="reviewReport" parameterType="rvreportVo">
+    	insert into RVREPORT
+    	values(seq_rvr.nextval,
+	    	   #{rvr_reason},
+	    	   sysdate,
+	    	   #{mem_id},
+	    	   #{rv_id})
+    </insert>
+    
+    <!-- 댓글 달기 -->
+    <insert id="insertComment" parameterType="rstcmtVo">
+		insert into RSTCMT
+		values (seq_rcmt.nextval,
+				#{rcmt_content},
+				#{rst_id},
+				#{RV_ID})	  
+    </insert>
+    
+    <!-- 예약 조회 -->
+    <select id="searchReserv" parameterType="String" resultType="reservationVo">
+	    select * 
+	    from reservation 
+	    where rs_id = #{rs_id}
+    </select>
+    
+    <!-- 예약 전체 조회 -->
+	<select id="searchAllReserv" parameterType="String" resultType="reservationVo">
+	    select * 
+	    from reservation 
+	    where rst_id = #{rst_id}
+    </select>
+
+	
+
+	
+
+</mapper>
+
+
+
+
+
+
+
+
+

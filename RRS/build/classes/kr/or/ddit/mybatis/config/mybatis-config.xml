@@ -53,6 +53,7 @@
       <mapper resource="kr/or/ddit/mybatis/mapper/rst-mapper.xml"/>
       <mapper resource="kr/or/ddit/mybatis/mapper/admin-mapper.xml"/>
       <mapper resource="kr/or/ddit/mybatis/mapper/member-mapper.xml"/>
+      <mapper resource="kr/or/ddit/mybatis/mapper/select-restaurant-mapper.xml"/>
    </mappers>
    
 

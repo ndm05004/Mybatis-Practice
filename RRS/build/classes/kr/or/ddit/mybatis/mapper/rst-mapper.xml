@@ -7,6 +7,65 @@
 <!-- <mapper>태그의 namespace속성은 Java소스에서 실행할 SQL문을 호출할 때 같이 사용되는 이름이다. -->
 <mapper namespace="restaurant">
 	
+	
+	<!-- 메뉴 삭제 -->
+    <delete id="deleteMenu" parameterType="menuVo">
+    	delete from MENU
+    	where MENU_ID = #{menu_id}
+    	and RST_ID = #{rst_id}
+    </delete>
+	
+	
+	<!-- 메뉴 수정 -->
+    <update id="updateMenu" parameterType="menuVo">
+    	update MENU
+    	<set>
+ 			MENU_NAME = #{menu_name},
+			MENU_PRICE = #{menu_price},
+			MENU_DS = #{menu_ds},
+			<if test="menu_photo != null">menu_photo = #{menu_photo}</if>
+    	</set>
+    	where MENU_ID = #{menu_id}
+    	and RST_ID = #{rst_id}
+    </update>
+	
+	
+	<!-- 메뉴 상세 정보 보여주기 -->
+	<select id="getMenuDetail" parameterType="menuVo" resultType="menuVo">
+		select *
+		from menu
+		where MENU_ID = #{menu_id}
+		and RST_ID = #{rst_id}
+	</select>
+	
+	
+	 <!-- 메뉴 등록 이거 해야됨-->
+    <insert id="addMenu" parameterType="menuVo">
+    	insert into menu values(
+    		(select COALESCE(MAX(menu_id), 0)+1 from menu where rst_id = #{rst_id}),
+            #{rst_id},
+            #{menu_name},
+            #{menu_price},
+            #{menu_ds},
+            #{menu_photo})
+    </insert> 
+
+	<!-- 메뉴 전체 조회 -->
+    <select id="showMenu" parameterType="String" resultType="menuVo">
+    	select * 
+    	from MENU
+    	where RST_ID = #{data}
+    </select>
+
+
+	<!--예약 삭제-->  
+	<delete id="rsCancel" parameterType="String">
+		delete 
+		from reservation 
+		where rs_id = #{rs_id}
+	</delete>
+	
+
 	<!-- 예약 상세 정보 보기 -->
 	<select id="getReservDetail" parameterType="String" resultType="reservDetailVo">
 		select 
@@ -27,13 +86,13 @@
 		and A.rs_id = #{data}
 	</select>
 	
-	<!-- 내 가게 예약 정보 -->
+	<!-- 내 가게 예약 정보-->
 	<select id="getReservation" parameterType="String" resultType="reservationVo">
 		select * from RESERVATION
 		where RST_ID = #{data}
 	</select>
 	
-	  <!-- 사업자 정보조회  -->
+	  <!-- 사업자 정보조회 -->
    <select id="selectRst" parameterType="String" resultType="restaurantVo">
      select a.rst_id,
         A.rst_pass,
@@ -53,8 +112,28 @@
         and rst_id = #{rst_id}
       
    </select>
+   <!-- 사업자별 리뷰리스트 가져오기 -->
+   <select id="reviewAll" parameterType="String" resultType="reviewVo">
+   		select 
+   		a.rv_date,
+        a.rv_title,
+        a.rv_content,
+        b.mem_nick as mem_id,
+        a.rs_id,
+        a.rv_id
+        from review A, members b,reservation c
+        where c.rst_id = #{rst_id}
+        and c.rs_id = a.rs_id
+        and a.mem_id = b.mem_id
+        order by 1 desc
+   </select>
    
-   <!-- 사업자 정보업데이트  -->
+   <!-- 사업자 태그 조회하기-->
+   <select id="selectTag" parameterType="String" resultType="tagVo">
+   	   select b.TAG_NAME from rsttag A, tag b where a.RST_ID = #{data} and b.tag_id = A.TAG_ID
+   </select>
+   
+   <!-- 사업자 정보업데이트-->
    <select id="updateRst" parameterType="restaurantVo" >
       update  RESTAURANT set 
       RST_ADDR = #{rst_addr},
@@ -69,9 +148,54 @@
 	where  	rst_id = #{rst_id}
       
    </select>
+   <!-- 사업자 리뷰관리에서 사업주가 댓글등록 -->
+  <insert id="insertRstCmt" parameterType="rstcmtVo">
+  		insert into rstcmt 
+  		values(seq_rcmt.nextval,
+  				#{rcmt_content},
+  				#{rst_id},
+  				#{rv_id},
+  				sysdate)
+   </insert>
+   
+   
+   <!-- 사업자 리뷰관리에서 해당 리뷰에 달린 사업자 댓글 보기 -->
+   <select id="showReply" parameterType="int" resultType="rstcmtVo">
+ 	 select *
+ 	 from rstcmt 
+ 	 where rv_id = #{data}
+   </select>
+   
+   <!-- 사업자 리뷰관리에서 해당 리뷰에 달린 댓글 삭제 -->
+   	<delete id="deleteCmt" parameterType="int">
+   		delete from rstcmt
+   		where RCMT_ID = #{data}
+   	</delete>
+   	
+   <!-- 사업자 리뷰관리에서 해당 리뷰에 달린 댓글수정 -->
+   	<delete id="modifyCmt" parameterType="rstcmtVo">
+   		update rstcmt
+   		set rcmt_content = #{rcmt_content}
+   		where rcmt_id = #{rcmt_id}
+   	</delete>
+   
+   <!-- 사업자가 신고하는 리뷰  -->
+   <insert id="reviewReport" parameterType="rvreportVo">
+	   	insert into rvreport 
+	   	values(SEQ_RVR.nextval,
+	   			#{rvr_reason},
+	   			sysdate,
+	   			'rst',
+   				#{rv_id})
+   </insert>
+   
+   <!-- 태그리스트 불러오기 -->
+   	<select id="getTag" resultType="tagVo">
+   		select * from tag
+   	
+   	</select>
 	
-	
-	<!-- 회원가입 -->
+	<!-- 회원가입-->
 	<insert id="rstJoin" parameterType="restaurantVo">
 		insert into 
 		restaurant(
@@ -158,48 +282,10 @@
 	
 	
 		
-    <!-- 메뉴 전체 조회 -->
-    <select id="rstAllMenu" parameterType="String" resultType="menuVo">
-    	select * 
-    	from MENU
-    	where RST_ID = #{data}
-    </select>
-    
-    <!-- 메뉴 삭제 -->
-    <delete id="delMenu" parameterType="menuVo">
-    	delete from MENU
-    	where MENU_ID = #{menu_id}
-    	and RST_ID = #{rst_id}
-    </delete>
-    
-    <!-- 메뉴 수정 -->
-    <update id="updateMenu" parameterType="Map">
-    	update MENU
-    	<set>
-    		<if test="menu_name != null">MENU_NAME = #{menu_name},</if>
-    		<if test="menu_price != null">MENU_PRICE = #{menu_price},</if>
-    		<if test="menu_ds != null">MENU_DS = #{menu_ds},</if>
-    		<if test="menu_photo != null">MENU_PHOTO = #{menu_photo}</if>
-    	</set>
-    	where MENU_ID = #{menu_id}
-    	and RST_ID = #{rst_id}
-    </update>
     
     <!-- 메뉴 등록전 해야할일 -->
-    <select id="">
-    	
-    </select>
     
-    <!-- 메뉴 등록 이거 해야됨-->
-    <!-- <insert id="insertMenu" parameterType="menuVo">
-    	insert into menu values(
-    		(select count(*)+1 from menu where rst_id = #{rst_id}),
-            #{rst_id},
-            #{menu_name},
-            #{menu_price},
-            #{menu_ds},
-            '');
-    </insert> -->
+   
     
     <!-- 리뷰 조회 -->
     <select id="searchReview" parameterType="String" resultType="reviewVo">
@@ -208,15 +294,7 @@
     	where RST_ID = #{data}
     </select>
     
-    <!-- 리뷰 신고 -->
-    <insert id="reviewReport" parameterType="rvreportVo">
-    	insert into RVREPORT
-    	values(seq_rvr.nextval,
-	    	   #{rvr_reason},
-	    	   sysdate,
-	    	   #{mem_id},
-	    	   #{rv_id})
-    </insert>
+    
     
     <!-- 댓글 달기 -->
     <insert id="insertComment" parameterType="rstcmtVo">
@@ -240,13 +318,10 @@
 	    from reservation 
 	    where rst_id = #{rst_id}
     </select>
+
 	
-	<!--예약 삭제-->  
-	<delete id="delReserv" parameterType="String">
-		delete 
-		from reservation 
-		where rs_id = #{rs_id}
-	</delete>
+
+	
 
 </mapper>
 

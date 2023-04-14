@@ -1,12 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
-
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>TableMate입니다</title>
@@ -14,265 +13,261 @@
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
-<!--         
-        부트스트랩
-        <meta name="viewport" content="width=device-width, initial-scale=1">
- 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-        --> 
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
         <script type="text/javascript" src="../js/jquery-3.6.4.min.js"></script>
+        <script src="../js/jquery.serializejson.min.js" type="text/javascript"></script>
 
-
-<script type="text/javascript">
-mypath = '<%=request.getContextPath()%>';
+		<script type="text/javascript">
+		mypath = '<%=request.getContextPath()%>';
 
 $(function(){
-	
-	// 승인대기 리스트 출력
-	$('#awaitAproval').on('click', function() {
-			$.ajax({
-				url : "<%=request.getContextPath()%>/admin/awaitAproval.do",
-				type : 'get',
-				dataType : 'json',
-				error : function(xhr) {
-					alert("상태 : " + xhr.status);
+   
+      // 승인대기 리스트 출력
+      $('#awaitAproval').on('click', function() {
+         $.ajax({
+            url : "<%=request.getContextPath()%>/admin/awaitAproval.do",
+            type : 'get',
+            dataType : 'json',
+            error : function(xhr) {
+               alert("상태 : " + xhr.status);
 
-				},
-				success : function(res) {
-					code = "<table border='1' class='table table-striped'>"
-					code += "<tr><td>식당ID</td><td>식당이름</td><td>사업자번호</td><td>승인요청일</td><td>결제관리</td>"
-						$.each(res, function(i, v){
-						    code += "<tr><td>"+v.rst_id+"</td><td>"+v.rst_name+"</td><td>"+v.bs_num+"</td><td>"+v.rst_req+"</td>";
-						    code += "<td><button class='btn btn-primary' id='"+v.rst_id+"' name='approvalbtn'>승인</button>";
-						    code += "<button class='btn btn-primary' id='"+v.rst_id+"' name='deletebtn'>반려</button></td></tr>";
-						});
-					code += "</table>"
-					$('#result').html(code);
-				}
-			})
-		}) 
-		
-		// 식당리스트 출력
-		$('#restaurantInfo').on('click', function() {
-			
-	
-			$.ajax({
-				url : "<%=request.getContextPath()%>/admin/restaurantInfo.do",
-				type : 'get',
-				dataType : 'json',
-				error : function(xhr) {
-					alert("상태 : " + xhr.status);
-				},  
-				success : function(res) {
-					code = "<table border='1' class='table table-striped'>"
-					code += "<tr><td>식당ID</td><td>식당이름</td><td>주소</td><td>전화번호</td><td>카테고리</td></tr>"
-					$.each(res, function(i, v){
-						code += "<tr><td><a href='#' name='restaurant-link' class='restaurant-link' id='" + v.rst_id + "'>" + v.rst_id + "</a></td>";
-						code += "<td>"+v.rst_name+"</td><td>"+v.rst_addr+"</td><td>"+v.rst_tel+"</td><td>"+v.rst_menu+"</td><tr>";
-					});
-					code += "</table>"
-					$('#result').html(code);
-				}
-			})
-		})
-		
-		// 식당 상세페이지
-		$(document).on('click', 'a[name="restaurant-link"]', function(){
-			 var rst_id = $(this).attr('id').trim();
-			
-			$('#wModal').modal('show');
-			$('#modal-result').load('component/restaurantdetail.jsp', {rst_id: rst_id});
+            },
+            success : function(res) {
+               code = "<table border='1' class='table table-striped'>"
+               code += "<tr><td>식당ID</td><td>식당이름</td><td>사업자번호</td><td>승인요청일</td><td>결제관리</td>"
+                  $.each(res, function(i, v){
+                      code += "<tr><td>"+v.rst_id+"</td><td>"+v.rst_name+"</td><td>"+v.bs_num+"</td><td>"+v.rst_req+"</td>";
+                      code += "<td><button class='btn btn-primary' id='"+v.rst_id+"' name='approvalbtn'>승인</button>";
+                      code += "<button class='btn btn-primary' id='"+v.rst_id+"' name='deletebtn'>반려</button></td></tr>";
+                  });
+               code += "</table>"
+               $('#result').html(code);
+            }
+         })
+      }) 
+      
+      // 식당리스트 출력
+      $('#restaurantInfo').on('click', function() {
+   
+         $.ajax({
+            url : "<%=request.getContextPath()%>/admin/restaurantInfo.do",
+            type : 'get',
+            dataType : 'json',
+            error : function(xhr) {
+               alert("상태 : " + xhr.status);
+            },  
+            success : function(res) {
+               code = "<table border='1' class='table table-striped'>"
+               code += "<tr><td>식당ID</td><td>식당이름</td><td>주소</td><td>전화번호</td><td>카테고리</td></tr>"
+               $.each(res, function(i, v){
+                  code += "<tr><td><a href='#' name='restaurant-link' class='restaurant-link' id='" + v.rst_id + "'>" + v.rst_id + "</a></td>";
+                  code += "<td>"+v.rst_name+"</td><td>"+v.rst_addr+"</td><td>"+v.rst_tel+"</td><td>"+v.rst_menu+"</td><tr>";
+               });
+               code += "</table>"
+               $('#result').html(code);
+            }
+         })
+      })
+      
+      // 식당 상세페이지
+      $(document).on('click', 'a[name="restaurant-link"]', function(){
+          var rst_id = $(this).attr('id').trim();
+         
+         $('#wModal').modal('show');
+         $('#modal-result').load('component/restaurantdetail.jsp', {rst_id: rst_id});
 
-		})
-		
-		
-		
-		
-		// 식당승인버튼
-		$(document).on('click', 'button[name="approvalbtn"]', function() {
-		  var rst_id = $(this).attr('id');
-		  if (confirm("승인하시겠습니까??")) {
-			  $.ajax({
-			    url: "<%=request.getContextPath()%>/admin/approveRestaurant.do",
-			    type: 'get',
-			    data: {rst_id: rst_id},
-			    success: function(res) {
-			    	if(res.flag == "okay"){
-						alert("승인되었습니다.");
-					}
-			    },
-			    error: function(xhr) {
-			      alert("상태: " + xhr.status);
-			    },
-			    dataType: 'json'
-			    
-			  });
-		 	 }
-			});
+      })
+      
+      
+      
+      
+      // 식당승인버튼
+      $(document).on('click', 'button[name="approvalbtn"]', function() {
+        var rst_id = $(this).attr('id');
+        var $tr = $(this).closest('tr');
+        if (confirm("승인하시겠습니까??")) {
+           $.ajax({
+             url: "<%=request.getContextPath()%>/admin/approveRestaurant.do",
+             type: 'get',
+             data: {rst_id: rst_id},
+             success: function(res) {
+                if(res.flag == "okay"){
+                  alert("승인되었습니다.");
+                   $tr.remove();
+               }
+             },
+             error: function(xhr) {
+               alert("상태: " + xhr.status);
+             },
+             dataType: 'json'
+             
+           });
+           }
+         });
 
-	
-		// 식당반려버튼
-		$(document).on('click', 'button[name="deletebtn"]', function() {
-			  var rst_id = $(this).attr('id');
-			  if (confirm("반려하시겠습니까??")) {
-			  $.ajax({
-			    url: "<%=request.getContextPath()%>/admin/deleteRestaurant.do",
-			    type: 'get',
-			    data: {rst_id: rst_id},
-			    success: function(res) {
-					if(res.flag=="okay"){
-						alert("반려되었습니다.");
-					}
-			    },
-			    error: function(xhr) {
-			      alert("상태: " + xhr.status);
-			    },
-			    dataType: 'json'
-			  });
-			  }
-			});
+   
+      // 식당반려버튼
+      $(document).on('click', 'button[name="deletebtn"]', function() {
+           var rst_id = $(this).attr('id');
+           var $tr = $(this).closest('tr');
+           if (confirm("반려하시겠습니까??")) {
+           $.ajax({
+             url: "<%=request.getContextPath()%>/admin/deleteRestaurant.do",
+             type: 'get',
+             data: {rst_id: rst_id},
+             success: function(res) {
+               if(res.flag=="okay"){
+                  alert("반려되었습니다.");
+                   $tr.remove();
+               }
+             },
+             error: function(xhr) {
+               alert("상태: " + xhr.status);
+             },
+             dataType: 'json'
+           });
+           }
+         });
 
-		
-		// 회원 리스트 출력
-		$('#memberInfo').on('click', function() {
-			  $.ajax({
-			    url : "<%=request.getContextPath()%>/admin/memberInfo.do",
-			    type : 'get',
-			    dataType : 'json',
-			    error : function(xhr) {
-			      alert("상태 : " + xhr.status);
-			    },
-			    success : function ( res ) {
-			      code = "<table border='1' class='table table-striped'>";
-			      code += "<tr><td>사용자ID</td><td>이메일</td><td>닉네임</td><td>신고받은횟수</td><td>제재횟수</td><td>활성화여부</td></tr>"
-			      $.each ( res , function ( i , v ) {
-			        code += "<tr><td><a href='#' name='member-link' class='member-link' id='" + v.mem_id + "'>" + v.mem_id + "</a></td ><td>"+v.mem_mail+"</td><td>"+v.mem_nick+"</td><td>"+v.mem_rn+"</td><td>"+v.mem_lc+"</td><td>"+v.mem_st+"</td></tr>";
-			      });
-			      code += "</table>";
-			      $('#result').html(code);
-			    }
-			  });
-			});
-		      
-		
-		// 회원 상세페이지
-		$(document).on('click', 'a[name="member-link"]', function() {
-			
-			$('#wModal').modal('show');
-			
-			var mem_id = $(this).attr('id').trim();
+      
+      // 회원 리스트 출력
+      $('#memberInfo').on('click', function() {
+           $.ajax({
+             url : "<%=request.getContextPath()%>/admin/memberInfo.do",
+             type : 'get',
+             dataType : 'json',
+             error : function(xhr) {
+               alert("상태 : " + xhr.status);
+             },
+             success : function ( res ) {
+               code = "<table border='1' class='table table-striped'>";
+               code += "<tr><td>사용자ID</td><td>이메일</td><td>닉네임</td><td>신고받은횟수</td><td>제재횟수</td><td>활성화여부</td></tr>"
+               $.each ( res , function ( i , v ) {
+                 code += "<tr><td><a href='#' name='member-link' class='member-link' id='" + v.mem_id + "'>" + v.mem_id + "</a></td ><td>"+v.mem_mail+"</td><td>"+v.mem_nick+"</td><td>"+v.mem_rn+"</td><td>"+v.mem_lc+"</td><td>"+v.mem_st+"</td></tr>";
+               });
+               code += "</table>";
+               $('#result').html(code);
+             }
+           });
+         });
+            
+      
+      // 회원 상세페이지
+      $(document).on('click', 'a[name="member-link"]', function() {
+         
+         $('#wModal').modal('show');
+         
+         var mem_id = $(this).attr('id').trim();
 
-			$('#modal-result').load('component/memberdetail.jsp', {mem_id: mem_id});
+         $('#modal-result').load('component/memberdetail.jsp', {mem_id: mem_id});
 
-		   });   
-		
-		
-		// 게시판 전체 출력
-		$('#noticeBoardInfo').on('click', function() {
-			
-			$.ajax({
-				
-				url : "<%=request.getContextPath()%>/admin/noticeBoardInfo.do",
-				type: 'get',
-				success: function(res){
-					code="<button class='btn btn-primary' id='noticeboardInsert' name='noticeboardInsert'>공지사항작성</button>";
-					code+="<table border='1' class='table table-striped'>";
-					code+="<tr><td>공지사항번호</td>";
-					code+="<td>제목</td>";
-					code+="<td>작성일</td></tr>";
+         });   
+      
+      
+      // 게시판 전체 출력
+      $('#noticeBoardInfo').on('click', function() {
+         
+         $.ajax({
+            
+            url : "<%=request.getContextPath()%>/admin/noticeBoardInfo.do",
+            type: 'get',
+            success: function(res){
+               code="<button class='btn btn-primary' id='noticeboardInsert' name='noticeboardInsert'>공지사항작성</button>";
+               code+="<table border='1' class='table table-striped'>";
+               code+="<tr><td class='bInfoNum'>공지사항번호</td>";
+               code+="<td>제목</td>";
+               code+="<td>작성일</td></tr>";
 
-					$.each (res, function(i , v) {
-						code+="<tr><td>"+v.nb_id+"</td>"
-						code+="<td><a href='#' name='noticedetail-link' class='noticedetail-link' id='" + v.nb_id + "'>" + v.nb_title + "</a></td>"
-						code+="<td>"+v.nb_date+"</td><tr>"
-					})
-					code += "</table>";
-					$('#result').html(code);
-				},
-				error: function(xhr){
-					alert("상태: " + xhr.status);
-				},
-				dataType: 'json'
-			})
-		})
-		
-		
-		// 공지사항 입력
-		$(document).on('click', '#noticeboardInsert', function(){
-		  $('#result').load('component/noticeBoardForm.jsp');
+               $.each (res, function(i , v) {
+                  code+="<tr><td>"+v.nb_id+"</td>"
+                  code+="<td><a href='#' name='noticedetail-link' class='noticedetail-link' id='" + v.nb_id + "'>" + v.nb_title + "</a></td>"
+                 // code+="<td>"+v.nb_date+"</td><tr>"
+                  code+="<td>"+ new Date().toISOString().slice(0,10) +"</td><tr>"  //현재 날짜 출력
+                 
+               })
+                code += "</table>";
+               $('#result').html(code);
+            },
+            error: function(xhr){
+               alert("상태: " + xhr.status);
+            },
+            dataType: 'json'
+         })
+      })
+      
+      
+      // 공지사항 입력
+      $(document).on('click', '#noticeboardInsert', function(){
+        $('#result').load('component/noticeBoardForm.jsp');
+        // 내용에 대해 줄바꿈 처리 추가
 
-		});
-				
-		
-		// 게시판 상세페이지
-		$(document).on('click', 'a[name="noticedetail-link"]', function(){
-		     nb_id = $(this).attr('id').trim();		     
-		     $.ajax({
-		          url: "<%=request.getContextPath()%>/admin/noticeBoardDetail.do",
-		          type: 'get',
-		          data: {nb_id: nb_id},
-		          success: function(res) {
-		        	  code = "<button class='btn btn-primary' id='noticeboardUpdate"+res.nb_id+"' name='noticeboardUpdate'>공지사항수정</button>";
-		        	  code += "<button class='btn btn-primary' id='noticeboardDelete"+res.nb_id+"' name='noticeboardDelete'>공지사항삭제</button>";
-		        	  code += "<table border='1' class='table table-striped'>";
-		              code += "<tr> <td>공지사항번호</td> <td>제목</td> <td>내용</td> <td>작성일</td></tr>";
-		              code += "<tr><td>" + res.nb_id + "</td>";
-		              code += "<td>" + res.nb_content + "</td>";
-		              code += "<td>" + res.nb_title + "</td>";
-		              code += "<td>" + res.nb_date + "</td>";
-		              code += "</tr></table>";
-		
-		              $('#result').html(code);
-		          },
-		          error: function(xhr) {
-		               alert("상태: " + xhr.status);
-		          },
-		          dataType: 'json'
-		     });
-		});
-				
-				
-/* 		$(document).on('click', 'button[name="noticeboardUpdate"]', function(){
-			var board_id = $(this).attr('id').substring(17);
-			 $.ajax({
-				 url: "/admin/component/noticeBoardUpdateForm.jsp",
-				 type: 'get',
-				 data: {board_id:board_id},
-				 success: function(res){
-					alert("성공") 
-				 },
-		         error: function(xhr) {
-		               alert("상태: " + xhr.status);
-		          }
-			 })
-		}); */
-		
-		
+      });
+            
+  
+         // 게시판 상세페이지
+         $(document).on('click', 'a[name="noticedetail-link"]', function(){
+              nb_id = $(this).attr('id').trim();           
+              $.ajax({
+                   url: "<%=request.getContextPath()%>/admin/noticeBoardDetail.do",
+                   type: 'get',
+                   data: {nb_id: nb_id},
+                   success: function(res) {
+                	   
+                      code = "<div class='container mt-3'>";
+                      code += "<div class='d-flex justify-content-end'>";
+                      code += "<button class='btn btn-primary' id='noticeboardUpdate"+res.nb_id+"' name='noticeboardUpdate' style='margin-right:10px;'>공지사항수정</button>"; 
+                      code += "<button class='btn btn-primary' id='noticeboardDelete"+res.nb_id+"' name='noticeboardDelete'>공지사항삭제</button>";
+                      code += "</div>";
+                      code += "<div class='mb-3 mt-3 topline'>";
+                      code += "<div class='topline2'>";  
+                      code += "<label for='exampleFormControlInput1' class='form-label'>공지사항번호</label>";
+                      code += "<input class='form-control btopbox' type='text' value='"+res.nb_id+"' aria-label='readonly input example' readonly>";
+                      code += "<label for='exampleFormControlInput1' class='form-label bdate'>작성일</label>";
+                      code += "<input class='form-control' type='text' value='"+res.nb_date +"' aria-label='readonly input example' readonly>";
+                      code += "</div>";
+                      code += "<label for='exampleFormControlInput1' class='form-label titleBox'>제목</label>";
+                      code += "<input class='form-control' type='text' value='"+res.nb_title +"' aria-label='readonly input example' readonly>";
+                      code += "</div>";
+                      code += "<label for='title'>내용</label>";
+                      //code += "<input class='form-control bcontent' type='text' value='"+res.nb_content.replace(/\n/g, '<br>')+"' aria-label='readonly input example' readonly>";
+                      //code += "<textarea class='form-control bcontent' aria-label='readonly input example' readonly>" + res.nb_content.replace(/\n/g, '<br>') + "</textarea>";
+                      
+                      //이거써code += "<textarea class='form-control bcontent contetnBox' aria-label='readonly input example' readonly>" + res.nb_content.replace(/\n/g, '\r\n') + "</textarea>";
+                      code += "<textarea class='form-control bcontent contetnBox' aria-label='readonly input example' readonly>" + res.nb_content.replace(/<br>/g, '\n') + "</textarea>";
+
+                      code += "</div>";
+                       $('#result').html(code);
+                   },
+                   error: function(xhr) {
+                        alert("상태: " + xhr.status);
+                   },
+                   dataType: 'json'
+              });
+         });
 
 
-		
-		
-		$(document).on('click', 'button[name="noticeboardDelete"]', function(){
-			var board_id = $(this).attr('id').substring(17);
-			 if (confirm("삭제하시겠습니까??")) {
-				 $.ajax({
-					 url: "<%=request.getContextPath()%>/admin/noticeboardDelete.do",
-					 type: 'get',
-					 data: {board_id:board_id},
-					 success: function(res){
-						alert("삭제되었습니다.") 
-					 },
-			         error: function(xhr) {
-			               alert("상태: " + xhr.status);
-			          } 
-				 })
-			 }
-			 })
-			 
-			 
- //블랙리스트 페이지
+      
+      $(document).on('click', 'button[name="noticeboardDelete"]', function(){
+         var board_id = $(this).attr('id').substring(17);
+          if (confirm("삭제하시겠습니까??")) {
+             $.ajax({
+                url: "<%=request.getContextPath()%>/admin/noticeboardDelete.do",
+                type: 'get',
+                data: {board_id:board_id},
+                success: function(res){
+                  alert("삭제되었습니다.") 
+                },
+                  error: function(xhr) {
+                        alert("상태: " + xhr.status);
+                   } 
+             })
+          }
+          })
+          
+          
+       //블랙리스트 페이지
          $('#blackListInfo').on('click', function() {
             $.ajax({
                url : "<%=request.getContextPath()%>/admin/blackListInfo.do",
@@ -285,7 +280,8 @@ $(function(){
                      code = "<table border='1' class='table table-striped'>"
                      code += "<tr><td>사용자ID</td><td>이름</td><td>신고받은횟수</td><td>제재횟수</td><td>활성화여부</td><td>결재관리</td></tr>"
                      $.each(res, function(i, v){
-                        code += "<tr><td>"+v.mem_id+"</td><td>"+v.mem_name+"</td><td>"+v.mem_rn+"</td><td>"+v.mem_lc+"</td><td>"+v.mem_st+"</td>"
+                        code+="<td><a href='#' name='blacklist-link' class='blacklist-link' id='" + v.mem_id + "'>" +v.mem_id + "</a></td>"
+                        code +="<td>"+v.mem_name+"</td><td>"+v.mem_rn+"</td><td>"+v.mem_lc+"</td><td>"+v.mem_st+"</td>"                    
                         code += "<td><button class='btn btn-primary' id='"+v.mem_id+"' name='blackListCancel'>해제</button></td></tr>";
                       });
                        code += "</table>"
@@ -295,7 +291,21 @@ $(function(){
                });
       
       
-      //블랙리스트 해제 버튼
+      
+      // 블랙리스트 상세 페이지 조회
+      $(document).on('click', 'a[name="blacklist-link"]', function(){
+         
+         var mem_id = $(this).attr('id').trim();
+         
+         $('#wModal').modal('show');         
+
+         $('#modal-result').load('component/blacklistdetail.jsp', {mem_id: mem_id});
+         
+         
+      });
+      
+      
+      //블랙리스트 댓글 해제 버튼
       $(document).on('click', 'button[name="blackListCancel"]', function() {
         var mem_id = $(this).attr('id');
         if (confirm("해제 하시겠습니까??")) {
@@ -316,26 +326,116 @@ $(function(){
            });
            }
          });
-		
-		
-		
-		// 공지사항 입력
-		$('#reportManage').on('click', function() {
-		  $('#result').load('component/reportManage.jsp');
-		});
-		
-		
-		$('#main').on('click', function() {
-			  $('#result').load('body.jsp');
-		});
-		
-		$(document).ready(function() {
-			  $('#result').load('body.jsp');
-		});
-				
+      
+      
 
-		
-	})	
+      
+      
+      // 공지사항 입력
+      $('#reportManage').on('click', function() {
+        $('#result').load('component/reportManage.jsp');
+      });
+      
+      
+      $('#main').on('click', function() {
+           $('#result').load('body.jsp');
+      });
+      
+      $(document).ready(function() {
+           $('#result').load('body.jsp');
+      });
+            
+
+       /* 공지사항 수정하기 */
+         
+         //공지사항 수정 
+         $(document).on('click','button[name="noticeboardUpdate"]', function(){
+            
+         
+               vid = $(this).attr('id').substring(17);
+            
+         
+               
+               //수정할 본문의 내용을 가져온다
+               vparents = $(this).parents('#result');
+               vtitle = $(vparents).find('#title').text().trim();
+               vcontent = $(vparents).find('#content').text().trim();
+               vdate = new Date().toISOString().slice(0,10);
+               
+               vt = $(vparents).find('.titleBox').html().trim();
+               vc = $(vparents).find('.contetnBox').html().trim();
+               
+               cont = vc.replace(/<br>/g, "\n");
+               
+               //modal창에 출력한다
+               $('#mform #title').val(vt);
+               $('#mform #content').val(cont);
+               $('#mform #date').val(vdate);
+               
+               $('#mform #num').val(vid);            
+               
+               $('#mModal').modal('show');
+               
+               $('#mform #date').prop('disabled',true);
+               
+         
+         }) //이벤트 끝
+         
+         //글 수정 modal창에서 전송버튼 클릭
+            $('#msend').on('click', function(){
+               fdata = $('#mform').serializeJSON();
+               console.log(fdata);
+
+               //vmodify = this;
+         
+               //서버로 보내기
+               $.boardUpdate();
+               
+              $('#mModal').modal('hide');
+
+            })
+      
+
+    //공지사항 수정완료
+            $.boardUpdate = function(){
+            $.ajax({
+               url : "<%=request.getContextPath()%>/admin/noticeboardUpdate.do",
+               type : 'post',
+               data : fdata, //자체가 json이라 이렇게 적음
+               success : function(res) {
+                  
+            	   console.log(res);
+                  alert("수정이 완료되었습니다.");
+               //화면(본문의 내용) 바꾸기
+                  $.updateView(res);
+
+               },
+               error : function(xhr) {
+                  alert("상태 : " + xhr.status) 
+               },
+               dataType : 'json'
+            })
+   } 
+         
+          $.updateView = function(res) {
+            //수정된 게시물의 데이터를 화면에 업데이트 
+			console.log(res);
+            console.log("ttt=" + res.nb_title);
+            console.log("ccc=" + res.nb_content);
+            
+            console.log("idd=" + res.nb_id);
+            
+           $('#noticeboardUpdate'+res.nb_id).parents('#result').find('.titleBox').html(res.nb_title);
+          // $('#noticeboardUpdate'+res.nb_id).parents('#result').find('.contetnBox').html(res.nb_content);
+          
+
+        // 내용에 대해 줄바꿈 처리 추가
+           var content = res.nb_content.replace(/<br>/g, "\n");
+           $('#noticeboardUpdate'+res.nb_id).parents('#result').find('.contetnBox').html(content);
+         } 
+          
+
+   })   
 </script>
 <style>
    
@@ -343,38 +443,45 @@ $(function(){
       text-decoration: none;
    }
    
-   .mListWrapper{
-   	width:100%;
-   	margin-top:30px;
-	text-align: center;
-   
+   #result{
+      
+      margin-top: 10px;
+      
    }
-   
-   .title {
-    display: inline-block;
-    width: 100px;
-    text-align: right;
-    margin-right:10px;
-   
-   }
-   
-   .content{
-   
-   width:30%;
-  padding: 12px;
-  border: 3px solid #ccc;
-  border-radius: 15px;
-  box-sizing: border-box;
-  margin-top: 6px;
-  margin-bottom: 16px;
-  resize:vertical
-   }
-   
+
    img{
    width:200px;
    height: 60px;
 }
 
+td.bInfoNum{
+	width:200px;
+}
+.topline{
+   display: flex;
+   flex-direction: column;
+}
+.topline2{
+   display: flex;
+}
+.form-label{
+  width: 285px;
+
+}
+
+.btopbox {
+  height: 40px;
+}
+.bdate {
+  text-align: right;
+  margin-right: 10px;
+}
+.bcontent{
+  height: 500px;
+  overflow-y: auto; 
+  display: block;
+  text-align: left;
+}
 </style>     
        
 </head>
@@ -385,14 +492,26 @@ $(function(){
            <!-- Sidebar-->
            
            <div class="border-end bg-white" id="sidebar-wrapper">
-               <div class="sidebar-heading border-bottom bg-light"><img src="../images/로고.png"></div>
+               <div class="sidebar-heading border-bottom bg-light"><img src="../images/로고.png" id="main"></div>
                <div class="list-group list-group-flush">
-                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="awaitAproval" href="#!">승인대기</a>
-                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="restaurantInfo" href="#!">사업자</a>
-                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="memberInfo" href="#!">회원</a>
-                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="blackListInfo" href="#!">블랙리스트</a>
-                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="reportManage" href="#!">신고관리</a>
-                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="noticeBoardInfo" href="#!">공지사항관리</a>
+                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="awaitAproval" href="#!">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file align-text-bottom" aria-hidden="true"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                   승인대기</a>
+                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="restaurantInfo" href="#!">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users align-text-bottom" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                   사업자</a>
+                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="memberInfo" href="#!">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users align-text-bottom" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                   회원</a>
+                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="blackListInfo" href="#!">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text align-text-bottom" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                   블랙리스트</a>
+                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="reportManage" href="#!">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text align-text-bottom" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                   신고관리</a>
+                   <a class="list-group-item list-group-item-action list-group-item-light p-3" id="noticeBoardInfo" href="#!">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text align-text-bottom" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                   공지사항관리</a>
                </div>
                
            </div>
@@ -426,13 +545,84 @@ $(function(){
                <div class="container-fluid" id="result">
                    <h1 class="mt-4">메뉴 상세화면</h1>
 
-                 
                </div>
+
+               <div class="modal" id="wModal">
+              <div class="modal-dialog">
+                <div class="modal-content">
+            
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                    <h4 class="modal-title">회원상세 정보</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+            
+                  <!-- Modal body -->
+                  <div class="modal-body" id="modal-result">
+
+                  </div>
+            
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
            </div>
        </div>
+
+       
+                <!-- 글 수정 The Modal -->
+         <div class="modal" id="mModal">
+            <div class="modal-dialog">
+               <div class="modal-content">
+
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                     <h4 class="modal-title">공지사항 수정하기</h4>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+
+                  <!-- Modal body -->
+                  <div class="modal-body">
+                     <form name="mform" id="mform">
+
+                  <input type="hidden" id="num" name="num">
+                  <!-- 수정을 하려면 기준이 되는 글번호가 있어야함 -->
+                  <label>제목</label>
+                  <input type="text" class="txt" id="title" name="title"><br>
+                  
+                  <label>내용</label>
+                  <br>
+                  <textarea rows="5" cols="40"  class="txt" id="content" name="content"></textarea>
+                  <br>
+                  <br>
+                  
+                  <label>작성일</label>
+                  <input type="text"  class="txt" id="date" name="date"><br>
+                  
+                  <input type="button" value="수정하기" id="msend" name="msend">
+               </form>
+                  </div>
+
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-danger"
+                        data-bs-dismiss="modal">Close</button>
+                  </div>
+
+               </div>
+            </div>
+         </div>
+         
+         
        <!-- Bootstrap core JS-->
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
        <!-- Core theme JS-->
        <script src="js/scripts.js"></script>
+       
    </body>
 </html>

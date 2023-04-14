@@ -6,12 +6,43 @@
    
 <!-- <mapper>태그의 namespace속성은 Java소스에서 실행할 SQL문을 호출할 때 같이 사용되는 이름이다. -->
 <mapper namespace="admin">
+    	
+	<!-- 관리자 메인 페이지 결재 대기 count 조회 -->
+   	<select id="signCount" resultType="int">
+   		select count(*) from restaurant where accept is null
+   	</select>
+
+
+	<select id="totalCount" parameterType="map" resultType="int">
+		select count(*) from ${table} where 1=1
+		  
+		    <if test="acceptNotNull=='acceptnotnull'">
+		      and accept is not null
+		    </if>
+		    <if test="acceptNull=='acceptnull'">
+		      and accept is null
+		    </if>
+		    <if test="memSt == 'memSt'">
+		      and mem_st = 1
+		    </if>
+		  
+	</select>
+	
+	
+
     
     <!--        사업자 승인 페이지 부분       -->
     <!-- 사업자 정보조회(승인대기) -->
-    <select id="waitApproval" resultType="restaurantVo">
-       select rst_id, rst_name, rst_req, bs_num from restaurant where accept is null
-    </select>
+	<select id="waitApproval" parameterType="map" resultType="restaurantVo">
+	 select A.* from 
+	     (select rownum as rnum , B.* from
+	        ( select rst_id, rst_name, rst_req, bs_num from restaurant where accept is null) B 
+	    <![CDATA[
+	          where rownum <= #{end}) A
+	       where A.rnum >= #{start}
+	     ]]> 
+	</select>	
+   
    
    
    <!-- 결재관리버튼(승인) -->
@@ -24,14 +55,20 @@
       delete from restaurant where rst_id = #{rst_id}
    </delete>
    
-   
-   <!--                 회원 관리 부분                -->
+      <!--                 회원 관리 부분                -->
    <!-- 사업자 정보 조회 (관리자)-->
-   <select id="restaurantInfo" resultType="rstdetailVo">
-      select rst_id, rst_name, rst_addr, rst_tel, 
-         (select ctg_name from category a where a.ctg_id = b.ctg_id) as rst_menu 
-       from restaurant b where accept is not null
-   </select>   
+   <select id="restaurantInfo" parameterType="map" resultType="rstdetailVo">
+	    select A.* from 
+	     (select rownum as rnum , B.* from
+	        ( select rst_id, rst_name, rst_addr, rst_tel, 
+	         (select ctg_name from category a where a.ctg_id = b.ctg_id) as rst_menu 
+	       from restaurant b where accept is not null) B 
+	    <![CDATA[
+	          where rownum <= #{end}) A
+	       where A.rnum >= #{start}
+	     ]]> 
+	</select>	
+      
    
    <!-- 사업자 상세 조회-->
    <select id="restaurantDetail" resultType="rstdetailVo" parameterType="String">
@@ -40,22 +77,36 @@
       from RESTAURANT b where RST_ID=#{rst_id}
    </select>
    
+
    <!-- 멤버 조회 -->
-   <select id="memberInfo" resultType="memberVo">
-      select * from members
-   </select>
+   <select id="memberInfo" parameterType="map" resultType="memberVo">
+	    select A.* from 
+	     (select rownum as rnum , B.* from
+	        ( select * from members) B 
+	    <![CDATA[
+	          where rownum <= #{end}) A
+	       where A.rnum >= #{start}
+	     ]]> 
+  </select>	
    
    <!-- 멤버 상세조회 -->
    <select id="memberDetail" resultType="memberVo" parameterType="String">
           select * from members where mem_id= #{mem_id} 
     
-   </select>   
+   </select>  
    
-   
-   <!-- 멤버 블랙리스트 -->
-   <select id="blackListInfo" resultType ="memberVo">
-   select mem_id, mem_name, mem_rn, mem_st, mem_lc from members where mem_st=1
-   </select>
+    
+   <!-- 멤버 블랙리스트 -->   
+   <select id="blackListInfo" parameterType="map" resultType="memberVo">
+	    select A.* from 
+	     (select rownum as rnum , B.* from
+	        ( select mem_id, mem_name, mem_rn, mem_st, mem_lc from members where mem_st=1) B 
+	    <![CDATA[
+	          where rownum <= #{end}) A
+	       where A.rnum >= #{start}
+	     ]]> 
+  </select>	
+
    
    <!-- 블랙리스트 해제 버튼(삭제) -->
    <update id="signupBlackListDel" parameterType="String">
@@ -65,24 +116,36 @@
 
    <!-- 댓글 신고 전체 -->
    <select id="cmtReportList" resultType="cmtrVo">
-	select cmtr_id, cmtr_reason, cmtr_date, cmtreport.mem_id as reporter, cmt.mem_id as defendant, cmt_content
-	from cmtreport
-	join cmt on cmtreport.cmt_id = cmt.cmt_id
+		select cmtr_id, cmtr_reason, cmtr_date, cmtreport.mem_id as reporter, cmt.mem_id as defendant, cmt_content
+		from cmtreport
+		join cmt on cmtreport.cmt_id = cmt.cmt_id
    </select>
+   
+   <!-- 댓글 신고 해제 -->
+   <update id="rnRelease" parameterType="String">
+	   	update members set mem_rn = mem_rn-1 where mem_id = #{mem_id}
+   </update>
+   
+   <delete id="rnRelease2" parameterType="int">
+	    delete from cmtreport where cmtr_id =#{cmtr_id}
+   </delete>
+   
 
     <!-- 리뷰 신고 신고당한 부분만 추출 -->
    <select id="cmtReportDetail" resultType="cmtrVo" parameterType="String">  
-     select cmtr_id, cmtr_reason, cmtr_date, cmtreport.mem_id as reporter, cmt.mem_id as defendant, cmt_content
-	 from cmtreport
-	 join cmt on cmtreport.cmt_id = cmt.cmt_id
-	 where cmt.mem_id = #{mem_id}
+	     select cmtr_id, cmtr_reason, cmtr_date, cmtreport.mem_id as reporter, cmt.mem_id as defendant, cmt_content
+		 from cmtreport
+		 join cmt on cmtreport.cmt_id = cmt.cmt_id
+		 where cmt.mem_id = #{mem_id}
    </select>
       
    <!-- 리뷰 신고 해제 -->
-   <update id="rnRelease" parameterType="String">
-   	update members set mem_rn = -1 where mem_id = #{mem_id}
-   </update>
+   <delete id="rvrRelease" parameterType="int">
+	delete from rvreport where rvr_id = #{rvr_id}
+   </delete>
    
+   
+
    <!-- 리뷰 신고 리스트 전체-->
    <select id="rvreportList" resultType="rvrVo">
 	  select rvr_id, rvr_reason, rvr_date, b.mem_id as reporter, rv_title, a.mem_id as defendant, rv_content
@@ -103,10 +166,17 @@
    
    
    <!-- 공지사항 전체 조회 -->
-   <select id="noticeBoardInfo" resultType="noticeboardVo">
-      select nb_id, nb_title, nb_date from noticeboard
-   </select>
-   
+   <select id="noticeBoardInfo" parameterType="map" resultType="noticeboardVo">
+    select A.* from 
+     (select rownum as rnum , B.* from
+        (select nb_id, nb_title, nb_date from noticeboard order by nb_id desc) B 
+    <![CDATA[
+          where rownum <= #{end}) A
+       where A.rnum >= #{start}
+     ]]> 
+  </select>	
+  
+
    <!-- 선택한 공지사항 조회 -->
    <select id="noticeBoardDetail" resultType="noticeboardVo" parameterType="int">
       select * from noticeboard where nb_id = #{nb_id}
@@ -128,10 +198,7 @@
       update noticeboard set nb_title = #{nb_title}, nb_content= #{nb_content}, nb_date=sysdate where nb_id= #{nb_id}
    </update>
    
-   <!-- 관리자 메인 페이지 결재 대기 count 조회 -->
-   <select id="signCount" parameterType="int" resultType="int">
-      select count(*) from restaurant where accept is null
-   </select>
+
    
 
 </mapper>
