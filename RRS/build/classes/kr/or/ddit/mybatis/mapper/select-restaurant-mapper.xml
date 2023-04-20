@@ -7,7 +7,24 @@
 <!-- <mapper>태그의 namespace속성은 Java소스에서 실행할 SQL문을 호출할 때 같이 사용되는 이름이다. -->
 <mapper namespace="select-rst">
 	
-	
+	   <!-- 사업자별 리뷰리스트 가져오기 -->
+   <select id="rstreview" parameterType="String" resultType="reviewVo">
+         select 
+         a.rv_date,
+        a.rv_title,
+        a.rv_content,
+        b.mem_nick as mem_nick,
+        b.mem_id as mem_id,
+        a.rs_id,
+        a.rv_id,
+        a.rv_photo,
+        a.rv_sc
+        from review A, members b,reservation c
+        where c.rst_id = #{rst_id}
+        and c.rs_id = a.rs_id
+        and a.mem_id = b.mem_id
+        order by 1 desc
+   </select>
 
 </mapper>
 

@@ -1,0 +1,220 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel='shortcut icon' type='image/x-icon' href='../images/panda.png' />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-3.6.4.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400&display=swap" rel="stylesheet">
+
+
+<script type="text/javascript">
+$(function(){
+	$('#idcheck').on("click", function(){
+		memId = $('#uid').val().trim();
+		if(memId==""){
+			alert("ID를 입력하세요");
+			return;
+		}
+		
+		$.ajax({
+			url : '<%=request.getContextPath()%>/MemberIdCheck.do',
+				data : {
+					"uid" : memId
+				},
+				dataType : 'json',
+				success : function(res) {
+					if (res == "OK") {
+						$('#idCheckResult').html("사용가능");
+					} else {
+						$('#idCheckResult').html("중복된 ID입니다.");
+					}
+				},
+				error : function(xhr) {
+					alert("status :" + xhr.status);
+				}
+			})
+		})
+
+		$('#memberInsertForm').on('submit', function() {
+			idCheck = $('#idCheckResult').html();
+
+			if (idCheck != "사용가능") {
+				alert("ID가 중복되거나 중복체크를 하지 않았습니다.;")
+				return false;
+			}
+
+			if ($('#pw').val() == "" || $('#pw').val() != $('#pw2').val()) {
+				alert("비밀번호와 비밀번호 확인이 다릅니다. 다시 입력해주세요.");
+				return false;
+			}
+
+			if ($('.ess').val() == "") {
+				alert("정보를 입력해주세요");
+				return false;
+			}
+
+			return true;
+		})
+	})
+</script>
+
+<style type="text/css">
+body {
+   font-family: 'IBM Plex Sans KR', sans-serif;
+}
+#logo{
+width : 180px;
+height : 60px;
+}
+.main {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin-top: 10px;
+	background-color: #ffffff;
+}
+
+#insertmain {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin-top: 10px;
+	width: 700px;
+	background-color: #ffffff;
+}
+
+#conta {
+	width: 450px;
+}
+#idcheck {
+	margin-left: 10px;
+	background-color: #ff3d00;
+}
+
+#inidcheck{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+#join {
+	margin: 30px 0 20px;
+	width: 100%;
+	height: 50px;
+	background-color: #ff3d00;
+	border: none;
+	color: white;
+	font-weight: bold;
+	
+}
+
+ .intputarea{
+	width: 100%;
+ }
+ .inputinfo{
+ margin-top: 20px;
+ }
+</style>
+
+</head>
+<body>
+	<nav class="navbar navbar-expand-md navbar-light bg-light">
+		<a class="navbar-brand" href="<%=request.getContextPath()%>/mainPage.jsp" id="bigtitle"><img src="<%=request.getContextPath()%>/images/로고.png"alt="tablemate.png" id="logo"></a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNav" aria-controls="navbarNav"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item active"><a class="nav-link" href="#">카테고리</a>
+				</li>
+				<li class="nav-item"><a class="nav-link" href="#">예약하기</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="<%=request.getContextPath()%>/member/view/login.jsp">로그인</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<div id="main" class="main">
+		<div id="header">
+			<h1>회원가입 페이지</h1>
+		</div>
+		<div class="insertmain" id="insertmain">
+			<form id="memberInsertForm" method="post"
+				action="<%=request.getContextPath()%>/MemberInsert.do">
+				<div id="conta">
+					<div id="inputid">
+						<h5 class="inputinfo">아이디</h5>
+						<div id="inidcheck">
+							<input type="text" class="intputarea" name="uid" id="uid" class="ess">
+							<button type="button" id="idcheck" class="btn btn-danger btn-sm">중복검사</button>
+						</div>
+					</div>
+
+					<div>
+						<span id="idCheckResult"></span>
+					</div>
+
+					<div >
+						<h5 class="inputinfo">Password</h5>
+						<input type="password" class="intputarea" id="pw" name="pw">
+					</div>
+
+					<div>
+						<h5 class="inputinfo">Password확인</h5>
+						<input type="password" class="intputarea" name="pw2" id="pw2">
+					</div>
+
+					<div>
+						<h5 class="inputinfo">이름</h5>
+						<input type="text" class="intputarea" name="uname" class="ess">
+					</div>
+
+					<div>
+						<h5 class="inputinfo">생년월일</h5>
+						<input type="date" class="intputarea" name="ubir" class="ess">
+					</div>
+
+					<div>
+						<h5 class="inputinfo">닉네임</h5>
+						<input type="text" class="intputarea" name="unick" class="ess">
+					</div>
+
+					<div>
+						<h5 class="inputinfo">연락처</h5>
+						<input type="tel" class="intputarea" name="utel" class="ess">
+					</div>
+
+					<div>
+						<h5 class="inputinfo">E-MAIL</h5>
+						<input type="email" class="intputarea" name="umail" class="ess">
+					</div>
+
+					<div>
+						<h5 class="inputinfo" class="">자동가입방지</h5>
+						<input type="#" class="intputarea" name="#">
+					</div>
+
+					<div>
+						<input type="submit" id="join" value="회원가입">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+<%@include file="../../footer.jsp"%>   
+</body>
+</html>

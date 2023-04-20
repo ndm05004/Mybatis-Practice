@@ -7,6 +7,45 @@
 <!-- <mapper>태그의 namespace속성은 Java소스에서 실행할 SQL문을 호출할 때 같이 사용되는 이름이다. -->
 <mapper namespace="restaurant">
 	
+	<!-- 테이블 타입 인서트 -->
+	<insert id="insertTableType" parameterType="String">
+		insert into TABLETYPE(TT_ID,RST_ID)
+		values(1,#{data})
+	</insert>
+	
+	<!-- 태그 업데이트 2 -->
+	<insert id="insertRstTagList" parameterType="rsttagVo">
+		insert into RSTTAG
+		values(#{tag_id},#{rst_id})
+	</insert>
+	
+	<!-- 태그 업데이트 1 -->
+	<delete id="deleteRstTag" parameterType="String">
+		delete from RSTTAG
+		where RST_ID = #{data}
+	</delete>
+	
+	<!-- 문의리스트 불러오기 -->
+      <select id="rstQuestion" parameterType="String" resultType="iqrVo">
+         select a.iqr_id,
+            a.iqr_title,
+            a.iqr_content,
+            a.iqr_date,
+            a.iqr_as,
+            b.mem_nick as mem_id,
+            a.rst_id 
+            from iqr a, members b 
+                where a.rst_id = #{data}
+                and a.mem_id = b.mem_id
+            order by 4 desc
+      </select>
+	
+	   <!-- 문의에 답변하는 내용 -->
+   
+   <insert id="insertAnswer" parameterType="answerVo">
+         insert into Answer values(seq_answer.nextval,#{rst_id},#{iqr_id},#{a_content},#{q_content},#{iqr_writer})
+   
+   </insert>
 	
 	<!-- 메뉴 삭제 -->
     <delete id="deleteMenu" parameterType="menuVo">
@@ -42,7 +81,7 @@
 	 <!-- 메뉴 등록 이거 해야됨-->
     <insert id="addMenu" parameterType="menuVo">
     	insert into menu values(
-    		(select COALESCE(MAX(menu_id), 0)+1 from menu where rst_id = #{rst_id}),
+    		seq_menu_id.nextval,
             #{rst_id},
             #{menu_name},
             #{menu_price},
@@ -69,13 +108,13 @@
 	<!-- 예약 상세 정보 보기 -->
 	<select id="getReservDetail" parameterType="String" resultType="reservDetailVo">
 		select 
-		    A.rs_id,
-		    B.mem_name,
-		    A.rs_datetime,
-		    A.rs_people,
-		    B.mem_tel,
-		    D.menu_name,
-		    C.rm_qty
+		    A.rs_id as rs_id,
+		    B.mem_name as mem_name,
+		    A.rs_datetime as rs_datetime,
+		    A.rs_people as rs_people,
+		    B.mem_tel as rst_tel,
+		    D.menu_name as rst_addr,
+		    C.rm_qty as rm_qty
 		from RESERVATION A, 
 		        MEMBERS B,
 		        RSMENU C,
@@ -83,7 +122,10 @@
 		where A.mem_id = B.mem_id
 		and A.rs_id = C.rs_id
 		and D.menu_id = C.menu_id
-		and A.rs_id = #{data}
+		and c.rs_id = #{data}
+        and d.rst_id = ( select rst_id
+                            from reservation
+                        where rs_id = #{data})
 	</select>
 	
 	<!-- 내 가게 예약 정보-->
@@ -95,38 +137,40 @@
 	  <!-- 사업자 정보조회 -->
    <select id="selectRst" parameterType="String" resultType="restaurantVo">
      select a.rst_id,
-        A.rst_pass,
-        A.RST_NAME,
-        A.RST_INFO,
-        A.BS_NUM,
-        A.CLOSEDDAY,
-        A.OPNETME,
-        A.CLOSETIME,
-        A.RST_ADDR,
-        A.RST_MAIL,
-        A.RST_TEL, 
-        A.RST_PHOTO,
+        A.rst_pass as rst_pass,
+        A.RST_NAME as rst_name,
+        A.RST_INFO as rst_info,
+        A.BS_NUM as bs_num,
+        A.CLOSEDDAY as closedday,
+        A.OPNETME as opnetme,
+        A.CLOSETIME as closetime,
+        A.RST_ADDR as rst_addr,
+        A.RST_MAIL as rst_mail,
+        A.RST_TEL as rst_tel, 
+        A.RST_PHOTO as rst_photo,
         B.CTG_NAME AS CTG_ID 
         from RESTAURANT A, CATEGORY B 
         where b.ctg_id = A.CTG_ID 
         and rst_id = #{rst_id}
-      
    </select>
-   <!-- 사업자별 리뷰리스트 가져오기 -->
-   <select id="reviewAll" parameterType="String" resultType="reviewVo">
-   		select 
-   		a.rv_date,
-        a.rv_title,
-        a.rv_content,
-        b.mem_nick as mem_id,
-        a.rs_id,
-        a.rv_id
-        from review A, members b,reservation c
-        where c.rst_id = #{rst_id}
-        and c.rs_id = a.rs_id
-        and a.mem_id = b.mem_id
-        order by 1 desc
+   
+    <!-- 사업자별 리뷰리스트 가져오기 -->
+   
+   <select id="reviewAll" parameterType="reviewVo" resultType="reviewVo">
+    select A.*
+            from(select rownum as rnum , B.* 
+             from(select d.*, c.mem_nick, e.rst_id
+                     from review d, reservation e, members c
+                     where e.rs_id = d.rs_id and
+                           c.mem_id = d.mem_id and
+                           rst_id = #{rst_id}
+                    order by rv_date desc) B 
+         <![CDATA[
+         where rownum <= 8+(8*#{more})) A
+           where A.rnum >= 1+(8*#{more})
+            ]]>  
    </select>
+
    
    <!-- 사업자 태그 조회하기-->
    <select id="selectTag" parameterType="String" resultType="tagVo">
@@ -136,17 +180,18 @@
    <!-- 사업자 정보업데이트-->
    <select id="updateRst" parameterType="restaurantVo" >
       update  RESTAURANT set 
-      RST_ADDR = #{rst_addr},
-	RST_TEL = #{rst_tel},
-	RST_INFO = #{rst_info},
-	RST_PASS = #{rst_pass},
-	RST_MAIL = #{rst_mail},
-	CLOSEDDAY = #{closedday},
-	OPNETME = #{opnetme},
-	CLOSETIME = #{closetime},
-	RST_PHOTO = #{rst_photo}
-	where  	rst_id = #{rst_id}
-      
+        RST_ADDR = #{rst_addr},
+		RST_TEL = #{rst_tel},
+		RST_INFO = #{rst_info},
+		RST_PASS = #{rst_pass},
+		RST_MAIL = #{rst_mail},
+		CLOSEDDAY = #{closedday},
+		OPNETME = #{opnetme},
+		CLOSETIME = #{closetime},
+		RST_PHOTO = #{rst_photo},
+		RST_NAME = #{rst_name},
+		CTG_ID = #{ctg_id}
+	  where  	rst_id = #{rst_id}
    </select>
    <!-- 사업자 리뷰관리에서 사업주가 댓글등록 -->
   <insert id="insertRstCmt" parameterType="rstcmtVo">
@@ -189,10 +234,12 @@
    				#{rv_id})
    </insert>
    
+   
+   
+   
    <!-- 태그리스트 불러오기 -->
    	<select id="getTag" resultType="tagVo">
    		select * from tag
-   	
    	</select>
 	
 	<!-- 회원가입-->
@@ -319,7 +366,10 @@
 	    where rst_id = #{rst_id}
     </select>
 
-	
+	<!-- 리뷰넘버로 멤버아이디 조회 -->
+	<select id="idfromrv" parameterType="int" resultType="memberVo">
+		select a.* from members a, review b where b.rv_id = #{data} and b.mem_id = a.mem_id
+	</select>
 
 	
 

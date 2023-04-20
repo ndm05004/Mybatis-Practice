@@ -1,0 +1,194 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel='shortcut icon' type='image/x-icon' href='../images/panda.png' />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script type="text/javascript">
+
+$(function(){
+	memId = '<%=request.getParameter("memId")%>';
+	console.log(memId);
+	
+	$('#newPassSet').on('click',function(){
+		passval = $('#newPass').val().trim();
+		passval2 = $('#newPass2').val().trim();
+		
+		if(passval != passval2) {
+			$('#newpassSpan').text("비밀번호가 일치하지 않습니다.").css({'color': 'red', 'font-size': '1.5em'});
+		} else {
+			
+			$.ajax({
+				url: "<%=request.getContextPath()%>/newPassSet.do?memid=" + memId,
+				type: 'get',
+				data: {"newPass": passval},
+				success: function(res){
+	 				// 성공, 실패
+	 				alert(res.flag);
+	 				// 로그인 페이지로 이동
+					window.location.href = '<%=request.getContextPath()%>/member/view/login.jsp';
+				},
+				error: function(xhr){
+					alert("상태: " + xhr.status + "\ncode : " + xhr.statusText);
+				},
+				dataType: 'json'
+			})
+			
+		}
+	})
+	
+})
+	
+</script>
+
+<title>Password 재설정</title>
+<style type="text/css">
+
+.jumbotron h1 {
+  color: white;
+  font-weight: bold;
+}
+.jumbotron p {
+  color: white;
+}
+.btn-group img {
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
+}
+.jumbotron {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.carousel-item {
+  height: 600px; /* 높이 값은 원하는 값으로 변경해주세요 */
+}
+.carousel-item img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+.btn {
+    width: 400px; /* 버튼 가로 길이 */
+    height: 50px; /* 버튼 높이 */
+  }
+  
+  @media (max-width: 768px) {
+  .btn {
+    width: 100%;
+    height: 50px;
+  }
+}
+#id-form,#pw-form{
+	background-color: lightgray;
+	width: 70%;
+	margin: 0px auto;
+	padding: 50px;
+}
+#search{
+	margin: 0px auto;
+}
+label{
+	background-color: white; 
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <a class="navbar-brand" href="#">네비게이션 로고</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">카테고리</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">예약하기</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">로그인</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<br><br>
+<header>
+	<div class="d-flex justify-content-center">
+  	<h2>비밀번호 재설정</h2>
+</div>
+</header>
+<br><br>
+
+<div id="newPass-form">
+<div class="container">
+
+  <form action="" class="needs-validation" method="get" novalidate>
+    <div class="form-group">
+      <label for="newPass">새 비밀번호</label>
+      <input type="password" class="form-control" id="newPass" placeholder="Enter newpass" name="newPass" required>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
+    </div>
+    <div class="form-group">
+      <label for="newPass2">새 비밀번호 확인</label>
+      <input type="password" class="form-control" id="newPass2" placeholder="Enter newpass" name="newPass2" required>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
+    </div>
+    
+    <button type="button" class="btn btn-primary" id="newPassSet">확인</button><br>
+    <span id="newpassSpan"></span>
+  </form>
+</div>
+</div>
+
+<footer class="footer bg-light mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <h5>회사 정보</h5>
+        <p>회사명 주소 등</p>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-12">
+        <h5>고객 지원</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">문의하기</a></li>
+          <li><a href="#">이용약관</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-12">
+        <h5>팔로우</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Twitter</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-lg-12">
+        <p class="text-center">© 2023 Company Name.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

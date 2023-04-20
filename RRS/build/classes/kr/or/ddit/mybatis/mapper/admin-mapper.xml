@@ -13,7 +13,7 @@
    	</select>
 
 
-	<select id="totalCount" parameterType="map" resultType="int">
+<!-- 	<select id="totalCount" parameterType="map" resultType="int">
 		select count(*) from ${table} where 1=1
 		  
 		    <if test="acceptNotNull=='acceptnotnull'">
@@ -27,9 +27,22 @@
 		    </if>
 		  
 	</select>
+	 -->
 	
-	
-
+   <select id="totalCount" parameterType="map" resultType="int">
+      select count(*) from ${table} where 1=1
+        
+          <if test="acceptNotNull=='acceptnotnull'">
+            and accept is not null
+          </if>
+          <if test="acceptNull=='acceptnull'">
+            and accept is null
+          </if>
+          <if test="memSt == 'memSt'">
+            and mem_st = 1
+          </if>
+        
+   </select>
     
     <!--        사업자 승인 페이지 부분       -->
     <!-- 사업자 정보조회(승인대기) -->
@@ -58,7 +71,7 @@
       <!--                 회원 관리 부분                -->
    <!-- 사업자 정보 조회 (관리자)-->
    <select id="restaurantInfo" parameterType="map" resultType="rstdetailVo">
-	    select A.* from 
+	  select A.* from 
 	     (select rownum as rnum , B.* from
 	        ( select rst_id, rst_name, rst_addr, rst_tel, 
 	         (select ctg_name from category a where a.ctg_id = b.ctg_id) as rst_menu 
@@ -68,7 +81,15 @@
 	       where A.rnum >= #{start}
 	     ]]> 
 	</select>	
-      
+    
+   <!-- 메인_사업자 정보 조회 (관리자)-->
+   <select id="restaurantInfo2" resultType="rstdetailVo">
+	select rownum as rnum , B.* from
+	        ( select rst_id, rst_name, rst_addr, rst_tel, 
+	         (select ctg_name from category a where a.ctg_id = b.ctg_id) as rst_menu 
+	       from restaurant b where accept is not null) B 
+   
+   </select>	  
    
    <!-- 사업자 상세 조회-->
    <select id="restaurantDetail" resultType="rstdetailVo" parameterType="String">

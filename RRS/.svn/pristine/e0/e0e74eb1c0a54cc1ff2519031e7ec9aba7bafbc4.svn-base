@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="member">
+	<select id="searchId" parameterType="memberVo" resultType="String">
+		select MEM_ID from MEMBERS 
+    	 where MEM_NAME = #{mem_name} and MEM_MAIL = #{mem_mail}
+	</select>
+	
+	<select id="memberIdCheck" parameterType="String" resultType="int">
+		select count(*) cnt from MEMBERS where MEM_ID = #{MEM_ID}
+	</select>
+	
+	<insert id="insertMember" parameterType="memberVo">
+		insert into MEMBERS (MEM_ID, MEM_NAME, MEM_PASS, MEM_MAIL, MEM_TEL, MEM_NICK, MEM_BIR)
+		values(#{mem_id}, #{mem_name}, #{mem_pass}, #{mem_mail}, #{mem_tel}, #{mem_nick}, #{mem_bir})
+	</insert>
+	
+	<select id="searchPass" parameterType="memberVo" resultType="String">
+		select MEM_PASS from MEMBERS 
+    	 where MEM_ID = #{mem_id} and MEM_NAME = #{mem_name} and MEM_MAIL = #{mem_mail}
+	</select>
+	
+	<update id="newPassSet" parameterType="memberVo">
+		update MEMBERS set MEM_PASS = #{mem_pass} where MEM_ID = #{mem_id}
+	</update>
+	
+	<select id="searchRst" parameterType="String" resultType="searchVo">
+		select a.RST_ID as rst_id,
+		       a.RST_NAME as rst_name,
+		       a.STARCOUNTAVG as starcountavg,
+		       a.RST_ADDR as rst_addr,
+		       a.RST_PHOTO as rst_photo
+		 from RESTAURANT a
+		 LEFT OUTER JOIN CATEGORY b on a.CTG_ID=b.CTG_ID
+		 LEFT OUTER JOIN RSTTAG c on a.RST_ID=c.RST_ID
+		 LEFT OUTER JOIN TAG d on c.TAG_ID=d.TAG_ID
+		 LEFT OUTER JOIN MENU e on a.RST_ID=e.RST_ID
+		 where REPLACE(a.RST_NAME, ' ', '') LIKE REPLACE('%'||#{data}||'%', ' ', '') or
+               a.RST_NAME LIKE '%'||#{data}||'%' or
+               
+		       REPLACE(a.RST_ADDR, ' ', '') LIKE REPLACE('%'||#{data}||'%', ' ', '') or
+               a.RST_ADDR LIKE '%'||#{data}||'%' or
+               
+		       b.CTG_NAME LIKE '%'||#{data}||'%' or
+		       
+		       REPLACE(d.TAG_NAME, ' ', '') LIKE REPLACE('%'||#{data}||'%', ' ', '') or
+               d.TAG_NAME LIKE '%'||#{data}||'%' or
+               
+		       REPLACE(e.MENU_NAME, ' ', '') LIKE REPLACE('%'||#{data}||'%', ' ', '') or
+               e.MENU_NAME LIKE '%'||#{data}||'%'
+		 group by a.RST_ID, a.RST_NAME, a.STARCOUNTAVG, a.RST_ADDR, a.RST_PHOTO
+		 order by a.STARCOUNTAVG DESC
+	</select>
+	
+	<select id="loginCheck" parameterType="memberVo" resultType="memberVo">
+		select * from MEMBERS where mem_id = #{mem_id} and mem_pass = #{mem_pass}
+	</select>
+	
+	<insert id="boardInsert" parameterType="iqrVo">
+		insert into IQR(IQR_ID, IQR_TITLE, IQR_CONTENT, IQR_DATE, IQR_AS, MEM_ID, RST_ID)
+		values(SEQ_IQR.NEXTVAL,#{iqr_title},#{iqr_content}, sysdate, 0,#{mem_id},#{rst_id})
+	</insert>
+	
+	<select id="findRst" parameterType="String" resultType="restaurantVo">
+		select *
+		from RESTAURANT
+		where RST_ID = #{data}
+	</select>
+	
+	<select id="selectRvList" parameterType="reviewVo" resultType="reviewVo">
+		select * from REVIEW where mem_id = #{mem_id} order by 1 desc
+	</select>
+	
+	<update id="updateMember" parameterType="memberVo">
+		update MEMBERS set MEM_PASS = #{mem_pass}, MEM_NAME = #{mem_name}, MEM_NICK	 = #{mem_nick},
+		MEM_TEL = #{mem_tel}, MEM_MAIL = #{mem_mail}
+ 		where MEM_ID = #{mem_id}
+ 	</update>
+ 	
+	<delete id="deleteMember" parameterType="String">
+		delete from MEMBERS where MEM_ID = #{delId}
+	</delete>
+	
+	<insert id="insertReview" parameterType="reviewVo">
+		insert into REVIEW(
+		    RV_ID,
+		    RV_CONTENT,
+		    RV_DATE,
+		    RV_SC,
+		    RV_PHOTO,
+		    MEM_ID,
+		    RS_ID
+		) values(SEQ_RV.nextval, #{rv_content}, sysdate, #{rv_sc}, #{rv_photo}, #{mem_id}, #{rs_id})
+	</insert>
+	
+	<delete id="deleteReview" parameterType="int">
+		delete from REVIEW where RV_ID = #{rv_id}	
+	</delete>
+	
+	<update id="updateReview" parameterType="reviewVo">
+		update REVIEW set RV_CONTENT = #{rv_content} where RV_ID = #{rv_id}
+
+	</update>
+	
+	<select id="selectReview" parameterType="int" resultType="reviewVo">
+		select * from REVIEW where RV_ID = #{rv_id}
+	</select>
+	
+	<select id="selectRsvList" parameterType="String" resultType="reservDetailVo">
+		SELECT a.RS_ID as rs_id,
+		       c.RST_NAME as rst_name,
+		       b.MEM_NAME as mem_name,
+		       substr(a.RS_ID,1,8) as rs_time,
+		       a.RS_DATETIME as rs_datetime,
+		       a.RS_PEOPLE as rs_people,
+		       c.RST_TEL as rst_tel,
+		       c.RST_ADDR as rst_addr
+		       
+		FROM RESERVATION a
+		LEFT OUTER JOIN MEMBERS b ON a.MEM_ID = b.MEM_ID
+		LEFT OUTER JOIN RESTAURANT c ON a.RST_ID = c.RST_ID
+		
+		where a.MEM_ID = #{mem_id}
+		order by a.RS_ID DESC
+	</select>
+
+	
+	<select id="selectIqrList" parameterType="String" resultType="iqrVo">
+		select * from iqr where MEM_ID = #{mem_id} order by IQR_ID DESC
+	</select>
+	
+	<select id="selectRsMenuList" parameterType="String" resultType="rsmenuVo">
+		select a.RM_ID as rm_id,
+		       b.MENU_NAME as menu_name,
+		       a.RST_ID as rst_id,
+		       a.RM_QTY as rm_qty
+		  from RSMENU a, MENU b
+	     where a.MENU_ID = b.MENU_ID and a.rs_id = #{rs_id}
+	</select>
+
+	<select id="selectBookmark" parameterType="String" resultType="restaurantVo">
+		select a.RST_NAME as rst_name,
+		       a.RST_PHOTO as rst_photo,
+		       a.RST_INFO as rst_info,
+		       a.STARCOUNTAVG as starcountavg,
+		       a.RST_ID as rst_id
+		  from RESTAURANT a join BOOKMARK b on a.RST_ID = b.RST_ID
+		 where MEM_ID = #{mem_id}
+	</select>
+
+	<select id="iqrInfoView" parameterType="int" resultType="iqrVo">
+		select * from iqr where IQR_ID = #{data}
+	</select>
+	
+	<delete id="rsvDelete" parameterType="String">
+		delete from RESERVATION where RS_ID = #{rs_id}
+	</delete>
+	
+	<!-- 별점 평균 업데이트 -->
+	<update id="starAvgUpdate" parameterType="String">
+		update RESTAURANT set STARCOUNTAVG = (select ROUND(AVG(e.rvsc),1)
+		                                        from (select a.RV_SC as rvsc,
+		                                                     b.RS_ID,
+		                                                     b.RST_ID
+		                                                from REVIEW a join RESERVATION b on a.RS_ID = b.RS_ID
+		                                               where b.RST_ID = (select d.RST_ID
+		                                                                   from REVIEW c join RESERVATION d on c.RS_ID = d.RS_ID
+		                                                                  where c.RS_ID = #{rs_id} and rownum = 1)) e)
+		                  where RST_ID = (select d.RST_ID
+		                                    from REVIEW c join RESERVATION d on c.RS_ID = d.RS_ID
+		                                   where c.RS_ID = #{rs_id} and rownum = 1)
+	</update>
+</mapper>

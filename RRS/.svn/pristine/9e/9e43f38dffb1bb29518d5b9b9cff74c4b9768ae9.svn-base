@@ -1,0 +1,205 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="../../js/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=657d2b9a3dc2dbd9af64eee4de0290ad&libraries=services"></script>
+  
+<title>Insert title here</title>
+
+
+
+<script type="text/javascript">
+mypath = '<%=request.getContextPath()%>';
+
+</script>
+
+<style>
+div {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  }
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지 비율 유지 및 div 영역 꽉 차게 설정 */
+  }
+  
+#photo{
+  display: flex;
+  justify-content: center;
+}
+
+
+.reviewImg{
+	width: 200px;
+	height: 200px;
+}
+
+
+.imgtd{
+    width: 150px;
+    height: 150px;
+}
+
+.btn_area{
+	position : fixed;
+	bottom:0;
+}
+
+#reservation{
+background: #ff3d00;
+color: white;
+border: none;
+}
+
+ .button-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#reservation {
+  width: 85%;
+  height: 40px;
+}
+
+
+
+</style>
+
+</head>
+<body>
+<%String rst_id="asd123";%>
+
+<div id="main">
+
+<div id="mainhome" class="container p-3 my-3 border">
+	<%@include file="home.jsp"%>
+</div>
+
+
+<div id="menu-etc" class="container p-3 my-3 border">
+	<%@include file="home-menu-etc.jsp"%> 	
+</div>
+
+<div id="menu" class="container p-3 my-3 border">
+	<%@include file="menu.jsp"%> 
+</div>
+
+<div id="photo" class="container p-3 my-3 border">
+	<%@include file="mainphoto.jsp"%> 
+</div>
+
+<div id="mymap" style="width:100%;height:350px;" class="container p-3 my-3 border">
+
+<button type="button" onclick="searchAddr()">시작</button>
+</div>
+
+<div class="button-wrapper" style="width:300px; height:350px;" >
+<button type="button" class="btn_area" id="reservation" name="reservation" >예약하기</button>
+</div>
+
+
+</div>
+</body>
+
+
+
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=657d2b9a3dc2dbd9af64eee4de0290ad&libraries=services"></script>
+
+<script>
+
+keyword = "대전광역시 동구 가양남로 33번길 37";
+
+function searchAddr() {
+
+   
+
+   var mapContainer = document.getElementById('mymap'), // 지도를 표시할 div 
+
+    mapOption = {
+
+        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+
+        level: 3 // 지도의 확대 레벨
+
+    };  
+
+
+
+// 지도를 생성합니다    
+
+var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+
+
+// 주소-좌표 변환 객체를 생성합니다
+
+var geocoder = new kakao.maps.services.Geocoder();
+
+
+
+// 주소로 좌표를 검색합니다
+
+geocoder.addressSearch(keyword, function(result, status) {
+
+
+
+    // 정상적으로 검색이 완료됐으면 
+
+     if (status === kakao.maps.services.Status.OK) {
+
+
+
+        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+
+
+        // 결과값으로 받은 위치를 마커로 표시합니다
+
+        var marker = new kakao.maps.Marker({
+
+            map: map,
+
+            position: coords
+
+        });
+
+
+
+        // 인포윈도우로 장소에 대한 설명을 표시합니다
+
+        var infowindow = new kakao.maps.InfoWindow({
+
+            content: '<div style="width:150px;text-align:center;padding:6px 0;">우리회사</div>'
+
+        });
+
+        infowindow.open(map, marker);
+
+
+
+        // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+
+        map.setCenter(coords);
+
+    } 
+
+});    
+
+}
+
+</script>
+
+
+</html>

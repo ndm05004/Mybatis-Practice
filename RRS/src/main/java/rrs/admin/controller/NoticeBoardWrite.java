@@ -35,7 +35,7 @@ public class NoticeBoardWrite extends HttpServlet {
 		
 		int cnt = service.noticeBoardWrite(nvo);
 		
-		response.sendRedirect(request.getContextPath()+"/admin/index2.jsp");
+		response.sendRedirect(request.getContextPath()+"/admin/index.jsp");
 
 		
 	}

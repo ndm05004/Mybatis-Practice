@@ -34,6 +34,7 @@
       <typeAlias type="rrs.vo.RvReportViewVO" alias="rvrVo"/>
       <typeAlias type="rrs.vo.CmtReportViewVO" alias="cmtrVo"/>
       <typeAlias type="rrs.vo.PageVO" alias="pageVo"/>
+      <typeAlias type="rrs.vo.AnswerVO" alias="answerVo"/>
    </typeAliases>
    
    <environments default="oracleEnv">
